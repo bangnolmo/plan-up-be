@@ -1,15 +1,36 @@
-# main.py 파일
+import uvicorn
+from starlette.middleware.cors import CORSMiddleware
+from starlette.responses import JSONResponse
 
-from database import create_table, get_all_lectures
+import utils.env_util as env       # init env
+from fastapi import FastAPI
 
-# 1. 테이블 생성
-create_table()
 
-# 3. 데이터 조회
-schedules = get_all_lectures()
+# TODO : 배포시 docs_url 및 redoc_url 비활성화 시킬 것.
+# app = FastAPI(docs_url=None, redoc_url=None)
+app = FastAPI()
 
-# 조회한 데이터를 출력
-for schedule in schedules:
-    print(
-        f"ID: {schedule[0]}, 강의명: {schedule[1]}, 교수명: {schedule[2]}, 시간: {schedule[3]}, 장소: {schedule[4]}"
+# set CORS
+origins = [
+    'http://localhost:3000',
+    'http://127.0.0.1:3000',
+    env.FRONT_URL,
+]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=['*'],
+    allow_headers=['*'],
+)
+
+@app.get("/")
+def main():
+    return JSONResponse(
+        status_code=200,
+        content={ 'hello': 'world', 'wellcome': 'here!' }
     )
+
+if __name__ == "__main__":
+    uvicorn.run(app, host='127.0.0.1', port=env.SERVER_PORT)
