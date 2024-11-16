@@ -1,0 +1,25 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+    name: fastapi-deployment
+    namespace: backend
+spec:
+    replicas: 3
+    selector:
+        matchLabels:
+            app: fastapi
+    template:
+        metadata:
+            labels:
+                app: fastapi
+        spec:
+            nodeSelector:
+                cloud.google.com/gke-nodepool: backend-pool
+            containers:
+                - name: fastapi
+                  image: heung115/my-fastapi-app:latest
+                  ports:
+                      - containerPort: 80
+                  env:
+                      - name: ENV
+                        value: "production"
