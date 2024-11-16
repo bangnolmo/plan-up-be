@@ -12,7 +12,5 @@ RUN pip install --no-cache-dir -r requirements.txt
 # 애플리케이션 소스 복사
 COPY . .
 
-ENV PYTHONPATH=/app
-
 # FastAPI 애플리케이션 실행
 CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "80"]
