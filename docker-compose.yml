@@ -1,0 +1,17 @@
+version: "3.8"
+
+services:
+    backend:
+        build: .
+        ports:
+            - "8000:80"
+        environment:
+            - ENV=development
+        volumes:
+            - .:/app
+        networks:
+            - backend-network
+
+networks:
+    backend-network:
+        driver: bridge
