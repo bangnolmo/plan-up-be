@@ -3,8 +3,8 @@ name: CI/CD Pipeline for FastAPI Backend
 on:
     push:
         branches:
-            - master
-            - feature/CI-CD-build
+            - main
+            # - feature/CI-CD-build
     workflow_dispatch:
 
 env:
