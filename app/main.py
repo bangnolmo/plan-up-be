@@ -1,7 +1,10 @@
+import sys
+sys.path.append("./")
 import uvicorn
 from starlette.middleware.cors import CORSMiddleware
 from starlette.responses import JSONResponse
 
+# import utils.env_util as env
 import app.utils.env_util as env  # init env
 from fastapi import FastAPI
 
