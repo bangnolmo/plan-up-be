@@ -1,5 +1,5 @@
 from app.domain.entities.department import Department
 import app.database.database as db
 
-db.create_department_table()
-db.insert_department()
+if __name__ == "__main__":
+    db.create_department_table()
