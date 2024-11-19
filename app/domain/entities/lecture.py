@@ -1,4 +1,4 @@
-class LectureEntity:
+class Lecture:
     
     #초기화
     def __init__(self, id, lecture_name, grade, course_type, credit, professor_name, enrollment_status, time, location):

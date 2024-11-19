@@ -1,4 +1,4 @@
-class DepartmentEntity:
+class Department:
 
     #학과 초기화
     def __init__(self, hakgwa_cd, hakgwa_name, parent_cd=None):
