@@ -1,17 +1,47 @@
 version: "3.8"
 
 services:
-    backend:
-        build: .
-        ports:
-            - "8000:80"
-        environment:
-            - ENV=development
-        volumes:
-            - .:/app
-        networks:
-            - backend-network
+  db:
+    image: mysql:8.0
+    container_name: db
+    environment:
+      MYSQL_ROOT_PASSWORD: test
+      MYSQL_DATABASE: test
+      MYSQL_USER: test
+      MYSQL_PASSWORD: test
+      MYSQL_CHARACTER_SET_SERVER: utf8
+      MYSQL_CHARACTER_SET_CLIENT: utf8
+    volumes:
+      - ./app/database/init.sql:/docker-entrypoint-initdb.d/init.sql
+    ports:
+      - "3306:3306"
+    networks:
+      - db-network
+    command:
+#      - --character-set-client=utf8mb4
+#      - --character-set-connection=uf8mb4
+#      - --character-set-results=uf8mb4
+      - --character-set-server=utf8mb4
+      - --collation-server=utf8mb4_unicode_ci
+      - --skip-character-set-client-handshake
+
+  backend:
+      build: ./
+      ports:
+        - "8000:8000"
+      environment:
+        - ENV=development
+        - DB_HOST=db
+        - DB_PORT=3306
+        - DB_USER=test
+        - DB_NAME=test
+        - DB_PASS=test
+      volumes:
+        - .:/app
+      networks:
+        - db-network
+
 
 networks:
-    backend-network:
-        driver: bridge
+  db-network:
+
