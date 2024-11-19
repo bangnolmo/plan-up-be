@@ -10,8 +10,15 @@ router = APIRouter(
     prefix='/db'
 )
 
-@router.put("/update")
+@router.put(
+    "/update",
+    response_model=UpdateRequestDTO,
+    summary="Update Crawling Data / Resp. 안학룡")
 def update_crawling_data(item:  UpdateRequestDTO):
+    """
+    크롤링 서버에서 받은 데이터를 DB에 업데이트하는 api
+    """
+
     # auth 확인 하는 부분
     if item.auth and CRAWL_AUTH != item.auth and item.auth != 'test':
         return JSONResponse(
@@ -20,7 +27,6 @@ def update_crawling_data(item:  UpdateRequestDTO):
         )
 
     # 데이터 정제
-
     tmp_DB = dict()
 
     # 조직 데이터 정제
@@ -49,7 +55,9 @@ def update_crawling_data(item:  UpdateRequestDTO):
         content={"res": "OK!"}
     )
 
-@router.get("/test")
+@router.get(
+    "/test",
+    summary="임시 test api")
 def test():
     return JSONResponse(
         status_code=StatusCode.HTTP_OK,
