@@ -5,7 +5,7 @@ import sqlite3
 
 # 데이터베이스 연결 함수
 def get_connection():
-    conn = sqlite3.connect("schedule.db")
+    conn = sqlite3.connect(".\\app\\database\\schedule.db")
     return conn
 
 
