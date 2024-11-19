@@ -6,4 +6,4 @@ class UpdateRequestDTO(BaseModel):
     year: int
     hakgi: int
     jojik: list = []
-    classses: list = []
+    classes: list = []
