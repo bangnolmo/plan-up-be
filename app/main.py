@@ -1,6 +1,5 @@
-import sys
-sys.path.append("./")
 import uvicorn
+from app.domain.routes import lecture_router, department_router
 from starlette.middleware.cors import CORSMiddleware
 from starlette.responses import JSONResponse
 
@@ -12,6 +11,10 @@ from fastapi import FastAPI
 # TODO : 배포시 docs_url 및 redoc_url 비활성화 시킬 것.
 # app = FastAPI(docs_url=None, redoc_url=None)
 app = FastAPI()
+
+#라우트 등록
+app.include_router(lecture_router.router)
+app.include_router(department_router.router)
 
 # set CORS
 origins = [
@@ -32,7 +35,7 @@ app.add_middleware(
 @app.get("/")
 def main():
     return JSONResponse(
-        status_code=200, content={"hello": "world", "wellcome": "here!"}
+        status_code=200, content={"hello": "world!!", "wellcome": "here!"}
     )
 
 
