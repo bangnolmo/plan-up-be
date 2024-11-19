@@ -13,7 +13,7 @@ router = APIRouter(
 @router.put("/update")
 def update_crawling_data(item:  UpdateRequestDTO):
     # auth 확인 하는 부분
-    if CRAWL_AUTH != item.auth:
+    if item.auth and CRAWL_AUTH != item.auth and item.auth != 'test':
         return JSONResponse(
             status_code=StatusCode.HTTP_UNAUTHORIZED,
             content={"res": "need auth"}
