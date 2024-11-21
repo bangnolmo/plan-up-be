@@ -1,5 +1,6 @@
 import uvicorn
-from app.domain.routes import lecture_router, department_router
+from app.domain.department import department_router
+from app.domain.lecture import lecture_router
 from starlette.middleware.cors import CORSMiddleware
 from starlette.responses import JSONResponse
 

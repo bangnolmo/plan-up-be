@@ -1,6 +1,6 @@
 from fastapi import APIRouter, HTTPException
 from app.utils.db_driver import select_class_by_idx
-from app.domain.exceptions.exceptions import InvalidLectureException as e
+from app.domain.exceptions.route_exceptions import InvalidLectureException as e
 
 router = APIRouter()
 

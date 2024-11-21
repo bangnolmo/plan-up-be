@@ -1,6 +1,7 @@
 import mysql.connector
 
 from mysql.connector import Error
+from starlette.responses import JSONResponse
 from app.utils.env_util import DB_HOST
 from app.utils.env_util import DB_NAME
 from app.utils.env_util import DB_PASS
@@ -109,15 +110,27 @@ def select_jojik_name(id, year, hakgi):
     # except Error as e:
     #     print(f"에러 발생 : {e}")
     if id == "1":
-        return [{"name": "수원주간·00.교내이러닝",
-                 "idx": 12024201},
-                {"name": "수원주간·01.가상대학이러닝",
-                 "idx": 22024201}]
+        return JSONResponse(status_code=200, json=[{
+            [{
+                "name": "수원주간·00.교내이러닝",
+                "idx": 12024201
+            },
+            {
+                "name": "수원주간·01.가상대학이러닝",
+                "idx": 22024201
+            }]
+        }])
     elif id == "2":
-        return [{"name": "수원주간-대학-예술체육대학-디자인비즈학부-시각정보디자인전공",
-                 "idx": 32024201},
-                {"name": "수원주간-대학-예술체육대학-디자인비즈학부-산업디자인전공",
-                 "idx": 42024201}]
+        return JSONResponse(status_code=200, json=[{
+            [{
+                "name": "수원주간-대학-예술체육대학-디자인비즈학부-시각정보디자인전공",
+                "idx": 32024201
+            },
+            {
+                "name": "수원주간-대학-예술체육대학-디자인비즈학부-산업디자인전공",
+                "idx": 42024201
+            }]
+        }])
         
 def select_class_by_idx(idx):
     # try:
@@ -136,7 +149,7 @@ def select_class_by_idx(idx):
     # except Error as e:
     #     print(f"에러 발생 : {e}")
 
-    return [{
+    return JSONResponse(status_code=200, json=[{
         "id": "85511",
         "year": "1170",
         "name": "창설",
@@ -147,7 +160,7 @@ def select_class_by_idx(idx):
         "enrollment_status": "",
         "time": "화 1 2 3",
         "location": "7509 10PC실"
-    }]
+    }])
 
 
 if __name__ == "__main__":
