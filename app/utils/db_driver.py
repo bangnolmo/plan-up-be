@@ -149,16 +149,16 @@ def select_class_by_idx(idx):
     #     print(f"에러 발생 : {e}")
 
     return JSONResponse(status_code=200, content=[{
-        "id": "85511",
-        "year": "1170",
-        "name": "창설",
+        "sub_num": "85511",
+        "name": "창의기초설계",
         "grade": "1",
         "course_type": "컴터",
         "credit": "3",
-        "professor_name": "이동훈",
-        "enrollment_status": "",
-        "time": "화 1 2 3",
-        "location": "7509 10PC실"
+        "professor": "이동훈",
+        "note": "",
+        "period": "화 1 2 3",
+        "location": "7509 10PC실",
+        "parent_idx":"12024201"
     }])
 
 
