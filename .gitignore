@@ -65,7 +65,8 @@ MANIFEST
 .env
 
 # Python virtual environment
-planUpBack/
+PlanUpBack/
+PlanUpBack_lap/
 
 # PyInstaller
 #  Usually these files are written by a python script from a template
