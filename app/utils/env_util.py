@@ -15,3 +15,7 @@ DB_PASS = os.getenv("DB_PASS")
 DB_PORT = int(os.getenv("DB_PORT", 3306))
 
 CRAWL_AUTH = os.getenv("CRAWL_AUTH", 'test')
+
+GOOGLE_OAUTH_ID = os.getenv("GOOGLE_OAUTH_ID")
+GOOGLE_OAUTH_SECRET = os.getenv("GOOGLE_OAUTH_SECRET")
+GOOGLE_REDIRECT = os.getenv("GOOGLE_REDIRECT")
