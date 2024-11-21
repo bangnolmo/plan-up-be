@@ -153,7 +153,7 @@ def select_class_by_idx(idx):
         "name": "창의기초설계",
         "grade": "1",
         "course_type": "컴터",
-        "credit": "3",
+        "credits": "3",
         "professor": "이동훈",
         "note": "",
         "period": "화 1 2 3",
