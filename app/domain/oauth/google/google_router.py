@@ -103,11 +103,3 @@ def login_with_google(auth_code: str):
             'refresh': token_info['refresh_token'],
         }
     )
-
-
-
-@router.get("/callback",
-            summary="auth token 받기 위한 callback / 임시 콜백")
-def get_call_back(code: str):
-    print(code)
-    return code

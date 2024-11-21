@@ -102,25 +102,5 @@ def update_user(email, ac_token, re_token):
     return True
 
 
-def select_test():
-    try:
-        conn, cursor = get_conn_and_cursor()
-
-        sql_query = "SELECT * FROM jojik"
-
-        cursor.execute(sql_query)
-
-        data = cursor.fetchall()
-
-        close_conn_and_cursor(conn, cursor)
-
-        return len(data)
-
-    except Error as e:
-        print(f"에러 발생 : {e}")
-
-    return None
-
-
 if __name__ == "__main__":
     update_jojik_and_classes([], [])
