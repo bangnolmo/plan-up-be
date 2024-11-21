@@ -45,4 +45,4 @@ app.include_router(db_router.router)
 
 
 if __name__ == "__main__":
-    uvicorn.run(app, host="127.0.0.1", port=env.SERVER_PORT)
+    uvicorn.run("main:app", host="127.0.0.1", port=env.SERVER_PORT, reload=True)

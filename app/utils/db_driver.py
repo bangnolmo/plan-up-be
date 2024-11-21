@@ -89,8 +89,66 @@ def select_test():
 
     except Error as e:
         print(f"에러 발생 : {e}")
-
+        
     return None
+
+def select_jojik_name(id, year, hakgi):
+    # try:
+    #     conn, cursor = get_conn_and_cursor()
+
+    #     sql_query = "SELECT name,idx FROM jojik WHERE id = %s AND FLOOR((idx%10000000)/1000)= %s AND FLOOR((idx%1000)/10) = %s"
+
+    #     cursor.execute(sql_query, (id, year, hakgi))
+
+    #     data = cursor.fetchone()
+
+    #     close_conn_and_cursor(conn, cursor)
+
+    #     return data
+
+    # except Error as e:
+    #     print(f"에러 발생 : {e}")
+    if id == "1":
+        return [{"name": "수원주간·00.교내이러닝",
+                 "idx": 12024201},
+                {"name": "수원주간·01.가상대학이러닝",
+                 "idx": 22024201}]
+    elif id == "2":
+        return [{"name": "수원주간-대학-예술체육대학-디자인비즈학부-시각정보디자인전공",
+                 "idx": 32024201},
+                {"name": "수원주간-대학-예술체육대학-디자인비즈학부-산업디자인전공",
+                 "idx": 42024201}]
+        
+def select_class_by_idx(idx):
+    # try:
+    #     conn, cursor = get_conn_and_cursor()
+
+    #     sql_query = "SELECT * FROM classes WHERE parent_idx = %s"
+
+    #     cursor.execute(sql_query)
+
+    #     data = cursor.fetchall()
+
+    #     close_conn_and_cursor(conn, cursor)
+
+    #     return data
+
+    # except Error as e:
+    #     print(f"에러 발생 : {e}")
+
+    return [{
+        "id": "85511",
+        "year": "1170",
+        "name": "창설",
+        "grade": "1",
+        "course_type": "컴터",
+        "credit": "3",
+        "professor_name": "이동훈",
+        "enrollment_status": "",
+        "time": "화 1 2 3",
+        "location": "7509 10PC실"
+    }]
+
 
 if __name__ == "__main__":
     update_jojik_and_classes([], [])

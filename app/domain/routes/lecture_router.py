@@ -1,16 +1,19 @@
 from fastapi import APIRouter, HTTPException
-from app.domain.services.lecture_service import get_lecture_by_id, get_all_lectures
-from app.domain.exceptions.exceptions import InvalidLectureException
+from app.utils.db_driver import select_class_by_idx
+from app.domain.exceptions.exceptions import InvalidLectureException as e
 
 router = APIRouter()
 
 @router.get("/lectures")
-def fetch_lectures(id: str):
+def fetch_lectures(idx: int):
     try:
-        if id:
-            return get_lecture_by_id(id)    
-        else:
-            return get_all_lectures()
+        if idx:
+            result = select_class_by_idx(idx)
 
-    except InvalidLectureException as e:
+            if result:
+                return result
+        else:
+            raise HTTPException(status_code=404, detail=str(e))
+
+    except e:
         raise HTTPException(status_code=404, detail=str(e))
