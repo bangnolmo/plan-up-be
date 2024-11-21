@@ -110,27 +110,26 @@ def select_jojik_name(id, year, hakgi):
     # except Error as e:
     #     print(f"에러 발생 : {e}")
     if id == "1":
-        return JSONResponse(status_code=200, json=[{
-            [{
+        return JSONResponse(status_code=200, content=[{
                 "name": "수원주간·00.교내이러닝",
                 "idx": 12024201
-            },
-            {
+        },
+        {
                 "name": "수원주간·01.가상대학이러닝",
                 "idx": 22024201
-            }]
         }])
+    
     elif id == "2":
-        return JSONResponse(status_code=200, json=[{
-            [{
-                "name": "수원주간-대학-예술체육대학-디자인비즈학부-시각정보디자인전공",
-                "idx": 32024201
-            },
-            {
-                "name": "수원주간-대학-예술체육대학-디자인비즈학부-산업디자인전공",
-                "idx": 42024201
-            }]
+        return JSONResponse(status_code=200, content=[{
+            "name": "수원주간-대학-예술체육대학-디자인비즈학부-시각정보디자인전공",
+            "idx": 32024201
+        },
+        {
+            "name": "수원주간-대학-예술체육대학-디자인비즈학부-산업디자인전공",
+            "idx": 42024201
         }])
+    else:
+        return JSONResponse(status_code=404, content={"message": "Data not found"})
         
 def select_class_by_idx(idx):
     # try:
@@ -149,7 +148,7 @@ def select_class_by_idx(idx):
     # except Error as e:
     #     print(f"에러 발생 : {e}")
 
-    return JSONResponse(status_code=200, json=[{
+    return JSONResponse(status_code=200, content=[{
         "id": "85511",
         "year": "1170",
         "name": "창설",
