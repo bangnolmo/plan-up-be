@@ -8,6 +8,8 @@ from fastapi import FastAPI
 from app.domain.db import db_router
 from app.domain.oauth import oauth_router
 
+from app.domain.test import test_router
+
 # TODO : 배포시 docs_url 및 redoc_url 비활성화 시킬 것.
 # app = FastAPI(docs_url=None, redoc_url=None)
 app = FastAPI()
@@ -40,6 +42,10 @@ app.include_router(db_router.router)
 
 # 로그인 관련 라우터 추가
 app.include_router(oauth_router.router)
+
+# 개발을 위한 테스트 라우터 추가
+app.include_router(test_router.router)
+
 
 if __name__ == "__main__":
     uvicorn.run(app, host="127.0.0.1", port=env.SERVER_PORT)
