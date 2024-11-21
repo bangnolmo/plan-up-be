@@ -32,6 +32,7 @@ app.add_middleware(
 
 @app.get("/")
 def main():
+    logger.info("Application started.")
     return JSONResponse(
         status_code=200, content={"hello": "world", "wellcome": "here!"}
     )
