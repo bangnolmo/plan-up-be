@@ -20,9 +20,14 @@ spec:
                   image: heung115/my-fastapi-app:latest
                   ports:
                       - containerPort: 8000
+                  volumeMounts:
+                      - name: shared-logs
+                        mountPath: /app/logs
                   env:
                       - name: ENV
                         value: "production"
+                      - name: LOG_PATH
+                        value: "/app/logs/backend.log"
                   envFrom:
                       - secretRef:
                             name: backend-secrets
@@ -32,8 +37,9 @@ spec:
                   image: busybox
                   command: ["sh", "-c", "tail -f /app/logs/app.log"]
                   volumeMounts:
-                      - name: log-volume
+                      - name: shared-logs
                         mountPath: /app/logs
             volumes:
-                - name: log-volume
-                  emptyDir: {}
+                - name: shared-logs
+                  persistentVolumeClaim:
+                      claimName: backend-logs-pvc
