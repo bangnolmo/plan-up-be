@@ -73,6 +73,35 @@ def update_jojik_and_classes(all_jojik, all_class):
         print(f"에러 발생 : {e}")
 
 
+def update_user(email, ac_token, re_token):
+    try:
+        conn, cursor = get_conn_and_cursor()
+
+        # 사용자 정보 가져오기
+        sql_query = "SELECT count(*) FROM users WHERE email = (%s)"
+        cursor.execute(sql_query, (email, ))
+
+        res = cursor.fetchall()
+
+        # 사용자 정보 존재 -> token 업데이트 else 사용자 등록
+        if res[0][0] == 1:
+            sql_query = "UPDATE users SET ac_token = (%s), re_token = (%s) WHERE email = (%s)"
+            cursor.execute(sql_query, (ac_token, re_token, email))
+        else:
+            sql_query = "INSERT INTO users VALUES (%s, %s, %s)"
+            cursor.execute(sql_query, (email, ac_token, re_token))
+
+        conn.commit()
+
+        close_conn_and_cursor(conn, cursor)
+
+    except Error as e:
+        print(f"에러 발생 : {e}")
+        return False
+
+    return True
+
+
 def select_test():
     try:
         conn, cursor = get_conn_and_cursor()
@@ -91,6 +120,7 @@ def select_test():
         print(f"에러 발생 : {e}")
 
     return None
+
 
 if __name__ == "__main__":
     update_jojik_and_classes([], [])

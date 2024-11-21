@@ -3,18 +3,19 @@ import requests
 from starlette.responses import JSONResponse
 
 from app.utils.StatusCode import StatusCode
+from app.utils.db_driver import update_user
 from app.utils.env_util import GOOGLE_OAUTH_ID
 from app.utils.env_util import GOOGLE_OAUTH_SECRET
 from app.utils.env_util import GOOGLE_REDIRECT
 
 router = APIRouter(
-    prefix='/oauth'
+    prefix='/google',
+    tags= ['oauth']
 )
 
 @router.get(
-    "/google",
+    "",
     summary="Login with google auth / Resp. 안학룡",
-    tags= ['Login']
 )
 def login_with_google(auth_code: str):
     """
@@ -70,34 +71,43 @@ def login_with_google(auth_code: str):
     user_email = res.json()['email']
 
     # 학교 메일 검증
-    if user_email.find('@kyonggi.ac.kr'):
+    if user_email.find('@kyonggi.ac.kr') == -1:
         return JSONResponse(
             status_code=StatusCode.HTTP_BAD_REQUEST,
             content={'res': f'{user_email} is not school mail!'}
         )
 
+    if token_info.get('refresh_token', '') == '':
+        return JSONResponse(
+            status_code=StatusCode.HTTP_BAD_REQUEST,
+            content={'res': 'Need refresh token'}
+        )
 
-    # 사용자 검색 -> O : 그냥 access_token 리턴
-    #
-    # if search_user(user_email):
-        #  TODO : search user from db.
-    # 사용자 검색 -> X
-        # TODO : 사용자 등록
+    access_token = token_info['access_token']
+    refresh_token = token_info['refresh_token']
+
+    # 사용자가 존재하는 경우 : 토큰을 갠신
+    # 사용자가 존재하지 않는 경우 : 사용자및 토큰 저장.
+    if not update_user(user_email, access_token, refresh_token):
+        return JSONResponse(
+            status_code=StatusCode.HTTP_INTERNAL_SERVER_ERROR,
+            content={'res': f"Please try again in a few minutes."}
+        )
 
     # 최종적으로 access_token 반환
     return JSONResponse(
         status_code=StatusCode.HTTP_OK,
         content={
             'res': 'ok!',
-            'access_token': token_info['access_token']
+            'access_token': token_info['access_token'],
+            'refresh': token_info['refresh_token'],
         }
     )
 
 
 
-@router.get("/google/callback",
-            summary="auth token 받기 위한 callback / for test",
-            tags= ['Login'])
+@router.get("/callback",
+            summary="auth token 받기 위한 callback / 임시 콜백")
 def get_call_back(code: str):
     print(code)
     return code

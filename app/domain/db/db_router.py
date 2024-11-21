@@ -7,7 +7,8 @@ from app.utils.StatusCode import StatusCode
 from app.utils.db_driver import update_jojik_and_classes, select_test
 
 router = APIRouter(
-    prefix='/db'
+    prefix='/db',
+    tags= ['db']
 )
 
 @router.put(
