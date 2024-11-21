@@ -4,7 +4,7 @@ metadata:
     name: fastapi-deployment
     namespace: backend
 spec:
-    replicas: 3
+    replicas: 2
     selector:
         matchLabels:
             app: fastapi
@@ -19,7 +19,21 @@ spec:
                 - name: fastapi
                   image: heung115/my-fastapi-app:latest
                   ports:
-                      - containerPort: 80
+                      - containerPort: 8000
                   env:
                       - name: ENV
                         value: "production"
+                  envFrom:
+                      - secretRef:
+                            name: backend-secrets
+                      - configMapRef:
+                            name: backend-config
+                - name: log-viewer
+                  image: busybox
+                  command: ["sh", "-c", "tail -f /app/logs/app.log"]
+                  volumeMounts:
+                      - name: log-volume
+                        mountPath: /app/logs
+            volumes:
+                - name: log-volume
+                  emptyDir: {}
