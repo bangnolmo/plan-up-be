@@ -4,10 +4,11 @@ from starlette.responses import JSONResponse
 from app.domain.db.db_dto import UpdateRequestDTO
 from app.utils.env_util import CRAWL_AUTH
 from app.utils.StatusCode import StatusCode
-from app.utils.db_driver import update_jojik_and_classes, select_test
+from app.utils.db_driver import update_jojik_and_classes
 
 router = APIRouter(
-    prefix='/db'
+    prefix='/db',
+    tags= ['db']
 )
 
 @router.put(
@@ -53,13 +54,4 @@ def update_crawling_data(item:  UpdateRequestDTO):
     return JSONResponse(
         status_code=StatusCode.HTTP_OK,
         content={"res": "OK!"}
-    )
-
-@router.get(
-    "/test",
-    summary="임시 test api")
-def test():
-    return JSONResponse(
-        status_code=StatusCode.HTTP_OK,
-        content={"res": select_test()}
     )
