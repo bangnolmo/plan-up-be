@@ -2,7 +2,7 @@ from fastapi import APIRouter
 from starlette.responses import JSONResponse
 
 from app.utils.StatusCode import StatusCode
-from app.utils.db_driver import update_user
+from app.utils.db_driver import login_user
 
 
 router = APIRouter(
@@ -18,10 +18,10 @@ def test_update_user(code: int):
     if code == 1:
         return JSONResponse(
             status_code=StatusCode.HTTP_OK,
-            content= {'res': update_user("hello", 'world1', 'c++')}
+            content= {'res': login_user("hello", 'world1', 'c++')}
         )
     else:
         return JSONResponse(
             status_code=StatusCode.HTTP_OK,
-            content={'res': update_user("hello", 'world2', 'python')}
+            content={'res': login_user("hello", 'world2', 'python')}
         )

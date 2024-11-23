@@ -149,35 +149,39 @@ def select_jojik_name(gubun, year, hakgi):
 
         
 def select_class_by_idx(idx):
-    # try:
-    #     conn, cursor = get_conn_and_cursor()
+    try:
+        conn, cursor = get_conn_and_cursor()
 
-    #     sql_query = "SELECT * FROM classes WHERE parent_idx = %s"
+        sql_query = "SELECT * FROM classes WHERE parent_idx = %s"
+        cursor.execute(sql_query, (idx, ))
 
-    #     cursor.execute(sql_query)
+        data = cursor.fetchall()
 
-    #     data = cursor.fetchall()
+        result = []
+        for d in data:
+            result.append({
+                "sub_num": d[0],
+                "name": d[1],
+                "grade": d[2],
+                "course_type": d[3],
+                "credits": d[4],
+                "professor": d[5],
+                "note": d[6],
+                "period": d[7],
+                "location": d[8],
+                "parent_idx": d[9]
+            })
 
-    #     close_conn_and_cursor(conn, cursor)
+        close_conn_and_cursor(conn, cursor)
 
-    #     return data
-
-    # except Error as e:
-    #     print(f"에러 발생 : {e}")
-
-    return JSONResponse(status_code=200, content=[{
-        "sub_num": "85511",
-        "name": "창의기초설계",
-        "grade": "1",
-        "course_type": "컴터",
-        "credits": "3",
-        "professor": "이동훈",
-        "note": "",
-        "period": "화 1 2 3",
-        "location": "7509 10PC실",
-        "parent_idx":"12024201"
-    }])
+        return result
+    except Error as e:
+        print(f"에러 발생 : {e}")
+        return []
 
 
 if __name__ == "__main__":
-    select_jojik_name(1, 2024, 20)
+    data = select_class_by_idx(12024201)
+    for d in data:
+        print(d)
+    # select_jojik_name(1, None, None)

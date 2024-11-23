@@ -8,7 +8,7 @@ from app.utils.db_driver import select_jojik_name
 router = APIRouter()
 
 @router.get("/department")
-def fetch_department(id: str, year: int, hakgi: int):
+def fetch_department(id: int, year: int, hakgi: int):
     try:
         result = select_jojik_name(id, year, hakgi)
 
