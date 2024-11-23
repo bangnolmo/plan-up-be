@@ -111,23 +111,34 @@ def login_user(email, ac_token, re_token):
     return True
 
 
-def select_jojik_name(id, year, hakgi):
+def select_jojik_name(gubun, year, hakgi):
+    try:
+        conn, cursor = get_conn_and_cursor()
 
-    # try:
-    #     conn, cursor = get_conn_and_cursor()
+        find_id = year * 1000 + hakgi * 10 + gubun
 
-    #     sql_query = "SELECT name,idx FROM jojik WHERE id = %s AND FLOOR((idx%10000000)/1000)= %s AND FLOOR((idx%1000)/10) = %s"
+        sql_query = "SELECT name, idx FROM jojik WHERE IDX % 10000000 = %s"
 
-    #     cursor.execute(sql_query, (id, year, hakgi))
+        cursor.execute(sql_query, (find_id, ))
 
-    #     data = cursor.fetchone()
+        data = cursor.fetchall()
 
-    #     close_conn_and_cursor(conn, cursor)
 
-    #     return data
+        result = []
+        for d in data:
+            result.append({
+                'name': d[0],
+                'idx': d[1]
+            })
 
-    # except Error as e:
-    #     print(f"에러 발생 : {e}")
+        close_conn_and_cursor(conn, cursor)
+
+        return result
+
+    except Error as e:
+        print(f"에러 발생 : {e}")
+        return []
+
     if id == "1":
         return JSONResponse(status_code=200, content=[{
                 "name": "수원주간·00.교내이러닝",
@@ -137,7 +148,7 @@ def select_jojik_name(id, year, hakgi):
                 "name": "수원주간·01.가상대학이러닝",
                 "idx": 22024201
         }])
-    
+
     elif id == "2":
         return JSONResponse(status_code=200, content=[{
             "name": "수원주간-대학-예술체육대학-디자인비즈학부-시각정보디자인전공",
@@ -182,4 +193,4 @@ def select_class_by_idx(idx):
 
 
 if __name__ == "__main__":
-    update_jojik_and_classes([], [])
+    select_jojik_name(1, 2024, 20)
