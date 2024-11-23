@@ -112,6 +112,14 @@ def login_user(email, ac_token, re_token):
 
 
 def select_jojik_name(gubun, year, hakgi):
+    """
+    년도, 학기, 구분에 따른 조직 조회
+
+    :param gubun: 구분 (1: 교양, 2: 전공)
+    :param year: 검색할 년도
+    :param hakgi: 검색할 학기
+    :return: [{'name':str, 'idx':int}...]
+    """
     try:
         conn, cursor = get_conn_and_cursor()
 
@@ -139,27 +147,6 @@ def select_jojik_name(gubun, year, hakgi):
         print(f"에러 발생 : {e}")
         return []
 
-    if id == "1":
-        return JSONResponse(status_code=200, content=[{
-                "name": "수원주간·00.교내이러닝",
-                "idx": 12024201
-        },
-        {
-                "name": "수원주간·01.가상대학이러닝",
-                "idx": 22024201
-        }])
-
-    elif id == "2":
-        return JSONResponse(status_code=200, content=[{
-            "name": "수원주간-대학-예술체육대학-디자인비즈학부-시각정보디자인전공",
-            "idx": 32024201
-        },
-        {
-            "name": "수원주간-대학-예술체육대학-디자인비즈학부-산업디자인전공",
-            "idx": 42024201
-        }])
-    else:
-        return JSONResponse(status_code=404, content={"message": "Data not found"})
         
 def select_class_by_idx(idx):
     # try:
