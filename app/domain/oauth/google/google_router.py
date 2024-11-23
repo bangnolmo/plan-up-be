@@ -3,7 +3,7 @@ import requests
 from starlette.responses import JSONResponse
 
 from app.utils.StatusCode import StatusCode
-from app.utils.db_driver import update_user
+from app.utils.db_driver import login_user
 from app.utils.env_util import GOOGLE_OAUTH_ID
 from app.utils.env_util import GOOGLE_OAUTH_SECRET
 from app.utils.env_util import GOOGLE_REDIRECT
@@ -88,7 +88,7 @@ def login_with_google(auth_code: str):
 
     # 사용자가 존재하는 경우 : 토큰을 갠신
     # 사용자가 존재하지 않는 경우 : 사용자및 토큰 저장.
-    if not update_user(user_email, access_token, refresh_token):
+    if not login_user(user_email, access_token, refresh_token):
         return JSONResponse(
             status_code=StatusCode.HTTP_INTERNAL_SERVER_ERROR,
             content={'res': f"Please try again in a few minutes."}

@@ -74,7 +74,15 @@ def update_jojik_and_classes(all_jojik, all_class):
         print(f"에러 발생 : {e}")
 
 
-def update_user(email, ac_token, re_token):
+def login_user(email, ac_token, re_token):
+    """
+    사용자의 정보를 추가및 업데이트
+
+    :param email: 사용자의 이메일
+    :param ac_token: 사용자의 access token
+    :param re_token: 사용자의 refresh token
+    :return: boolean 저장 성공 여부
+    """
     try:
         conn, cursor = get_conn_and_cursor()
 
@@ -103,74 +111,77 @@ def update_user(email, ac_token, re_token):
     return True
 
 
-def select_jojik_name(id, year, hakgi):
-    # try:
-    #     conn, cursor = get_conn_and_cursor()
+def select_jojik_name(gubun, year, hakgi):
+    """
+    년도, 학기, 구분에 따른 조직 조회
 
-    #     sql_query = "SELECT name,idx FROM jojik WHERE id = %s AND FLOOR((idx%10000000)/1000)= %s AND FLOOR((idx%1000)/10) = %s"
+    :param gubun: 구분 (1: 교양, 2: 전공)
+    :param year: 검색할 년도
+    :param hakgi: 검색할 학기
+    :return: [{'name':str, 'idx':int}...]
+    """
+    try:
+        conn, cursor = get_conn_and_cursor()
 
-    #     cursor.execute(sql_query, (id, year, hakgi))
+        find_id = year * 1000 + hakgi * 10 + gubun
 
-    #     data = cursor.fetchone()
+        sql_query = "SELECT name, idx FROM jojik WHERE IDX % 10000000 = %s"
 
-    #     close_conn_and_cursor(conn, cursor)
+        cursor.execute(sql_query, (find_id, ))
 
-    #     return data
+        data = cursor.fetchall()
 
-    # except Error as e:
-    #     print(f"에러 발생 : {e}")
-    if id == "1":
-        return JSONResponse(status_code=200, content=[{
-                "name": "수원주간·00.교내이러닝",
-                "idx": 12024201
-        },
-        {
-                "name": "수원주간·01.가상대학이러닝",
-                "idx": 22024201
-        }])
-    
-    elif id == "2":
-        return JSONResponse(status_code=200, content=[{
-            "name": "수원주간-대학-예술체육대학-디자인비즈학부-시각정보디자인전공",
-            "idx": 32024201
-        },
-        {
-            "name": "수원주간-대학-예술체육대학-디자인비즈학부-산업디자인전공",
-            "idx": 42024201
-        }])
-    else:
-        return JSONResponse(status_code=404, content={"message": "Data not found"})
+
+        result = []
+        for d in data:
+            result.append({
+                'name': d[0],
+                'idx': d[1]
+            })
+
+        close_conn_and_cursor(conn, cursor)
+
+        return result
+
+    except Error as e:
+        print(f"에러 발생 : {e}")
+        return []
+
         
 def select_class_by_idx(idx):
-    # try:
-    #     conn, cursor = get_conn_and_cursor()
+    try:
+        conn, cursor = get_conn_and_cursor()
 
-    #     sql_query = "SELECT * FROM classes WHERE parent_idx = %s"
+        sql_query = "SELECT * FROM classes WHERE parent_idx = %s"
+        cursor.execute(sql_query, (idx, ))
 
-    #     cursor.execute(sql_query)
+        data = cursor.fetchall()
 
-    #     data = cursor.fetchall()
+        result = []
+        for d in data:
+            result.append({
+                "sub_num": d[0],
+                "name": d[1],
+                "grade": d[2],
+                "course_type": d[3],
+                "credits": d[4],
+                "professor": d[5],
+                "note": d[6],
+                "period": d[7],
+                "location": d[8],
+                "parent_idx": d[9]
+            })
 
-    #     close_conn_and_cursor(conn, cursor)
+        close_conn_and_cursor(conn, cursor)
 
-    #     return data
-
-    # except Error as e:
-    #     print(f"에러 발생 : {e}")
-
-    return JSONResponse(status_code=200, content=[{
-        "sub_num": "85511",
-        "name": "창의기초설계",
-        "grade": "1",
-        "course_type": "컴터",
-        "credits": "3",
-        "professor": "이동훈",
-        "note": "",
-        "period": "화 1 2 3",
-        "location": "7509 10PC실",
-        "parent_idx":"12024201"
-    }])
+        return result
+    except Error as e:
+        print(f"에러 발생 : {e}")
+        return []
 
 
 if __name__ == "__main__":
-    update_jojik_and_classes([], [])
+    data = select_class_by_idx(12024201)
+    for d in data:
+        print(d)
+    # select_jojik_name(1, None, None)

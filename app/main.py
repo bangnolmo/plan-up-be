@@ -39,15 +39,6 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-
-@app.get("/")
-def main():
-    logger.info("Application started.")
-    return JSONResponse(
-        status_code=200, content={"hello": "world!!", "wellcome": "here!"}
-    )
-
-
 # 크롤링한 데이터를 받는 라우터 추가
 app.include_router(db_router.router)
 
