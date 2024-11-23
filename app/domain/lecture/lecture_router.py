@@ -7,7 +7,11 @@ from app.domain.exceptions.route_exceptions import InvalidLectureException as e
 
 router = APIRouter()
 
-@router.get("/lectures")
+@router.get(
+    "/lectures",
+    summary="조직에 따른 개강한 수업 조회 / Resp. 최지민",
+    tags= ['search data']
+    )
 def fetch_lectures(idx: int):
     try:
         if idx:

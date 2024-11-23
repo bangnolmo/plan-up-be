@@ -7,7 +7,11 @@ from app.utils.db_driver import select_jojik_name
 
 router = APIRouter()
 
-@router.get("/department")
+@router.get(
+    "/department",
+    summary="id(gubun), year, hakgi 따른 조직 검색 / Resp. 최지민",
+    tags= ['search data']
+    )
 def fetch_department(id: int, year: int, hakgi: int):
     try:
         result = select_jojik_name(id, year, hakgi)
