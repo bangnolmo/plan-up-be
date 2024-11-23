@@ -74,7 +74,15 @@ def update_jojik_and_classes(all_jojik, all_class):
         print(f"에러 발생 : {e}")
 
 
-def update_user(email, ac_token, re_token):
+def login_user(email, ac_token, re_token):
+    """
+    사용자의 정보를 추가및 업데이트
+
+    :param email: 사용자의 이메일
+    :param ac_token: 사용자의 access token
+    :param re_token: 사용자의 refresh token
+    :return: boolean 저장 성공 여부
+    """
     try:
         conn, cursor = get_conn_and_cursor()
 
@@ -104,6 +112,7 @@ def update_user(email, ac_token, re_token):
 
 
 def select_jojik_name(id, year, hakgi):
+
     # try:
     #     conn, cursor = get_conn_and_cursor()
 
