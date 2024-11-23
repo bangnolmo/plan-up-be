@@ -35,7 +35,7 @@ spec:
                             name: backend-config
                 - name: log-viewer
                   image: busybox
-                  command: ["sh", "-c", "tail -f /app/logs/app.log"]
+                  command: ["sh", "-c", "tail -f /app/logs/backend.log"]
                   volumeMounts:
                       - name: shared-logs
                         mountPath: /app/logs
