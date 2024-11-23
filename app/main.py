@@ -6,6 +6,7 @@ from starlette.responses import JSONResponse
 
 # import utils.env_util as env
 import app.utils.env_util as env  # init env
+from app.utils.logging_config import setup_logger
 from fastapi import FastAPI
 
 from app.domain.db import db_router
@@ -15,6 +16,8 @@ from app.domain.test import test_router
 
 # TODO : 배포시 docs_url 및 redoc_url 비활성화 시킬 것.
 # app = FastAPI(docs_url=None, redoc_url=None)
+logger = setup_logger()
+
 app = FastAPI()
 
 #라우트 등록
@@ -39,6 +42,7 @@ app.add_middleware(
 
 @app.get("/")
 def main():
+    logger.info("Application started.")
     return JSONResponse(
         status_code=200, content={"hello": "world!!", "wellcome": "here!"}
     )
