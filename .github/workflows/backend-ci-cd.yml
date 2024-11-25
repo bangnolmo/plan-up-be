@@ -5,6 +5,7 @@ on:
         branches:
             - main
             # - feature/CI-CD-build
+            - hotfix/*
     workflow_dispatch:
 
 env:
