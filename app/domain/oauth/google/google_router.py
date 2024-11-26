@@ -1,17 +1,22 @@
-from fastapi import APIRouter
 import requests
-from starlette.responses import JSONResponse
 
+from fastapi import APIRouter
+from fastapi.params import Depends
+from starlette.responses import JSONResponse
+from fastapi.security import OAuth2PasswordBearer
 from app.utils.StatusCode import StatusCode
 from app.utils.db_driver import login_user
 from app.utils.env_util import GOOGLE_OAUTH_ID
 from app.utils.env_util import GOOGLE_OAUTH_SECRET
 from app.utils.env_util import GOOGLE_REDIRECT
 
+
 router = APIRouter(
     prefix='/google',
     tags= ['oauth']
 )
+
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/oauth/google/login")
 
 @router.get(
     "/login",
@@ -22,7 +27,7 @@ def login_with_google(auth_code: str):
     사용자가 준 구글 승인 코드를 사용 하여 로그인 수행.
 
     :param auth_code: 구글 승인 코드
-    :return: {"access_token": value, "user": value}
+    :return: {"access_token": value, "refresh_token": value, "user": value}
     """
 
     # access_token 요청
@@ -106,10 +111,24 @@ def login_with_google(auth_code: str):
         status_code=StatusCode.HTTP_OK,
         content={
             'res': 'ok!',
-            'access_token': token_info['access_token'],
+            'access_token': access_token,
+            'refresh_token': refresh_token,
             'user_email': user_email,
         }
     )
 
 
-# @router.get()
+@router.get(
+    "/auth",
+    summary="사용자의 access token 인증 / Resp. 안학룡"
+)
+def auth_user(token: str = Depends(oauth2_scheme)):
+    pass
+
+
+
+
+@router.get("/callback",
+            summary="auth token 받기 위한 callback / 임시 콜백")
+def get_call_back(code: str):
+    return code
