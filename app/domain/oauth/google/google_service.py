@@ -1,9 +1,11 @@
 import requests
+from fastapi import Header
 
 from app.utils.StatusCode import StatusCode
 from app.utils.env_util import GOOGLE_OAUTH_ID
 from app.utils.env_util import GOOGLE_OAUTH_SECRET
 from app.utils.env_util import GOOGLE_REDIRECT
+from typing import Optional
 
 def get_google_token(auth_code):
     """
@@ -62,3 +64,25 @@ def get_google_token_info(access_token):
         return None
 
     return {'email': result['email'], 'expires_in': int(result['expires_in'])}
+
+
+TOKEN_ERROR = 'error'
+TOKEN_EXPIRE = 'expire'
+
+def verify_google_token(auth: Optional[str] = Header(None)):
+    """
+    access token 을 검증 함.
+
+    :param auth: 사용자가 보낸 auth header
+    :return: str
+    """
+    if auth is None or not auth.startswith("Bearer "):
+        return TOKEN_ERROR
+
+    access_token = auth.split()[1]
+    token_info = get_google_token_info(access_token)
+
+    if not token_info:
+        return TOKEN_EXPIRE
+
+    return access_token

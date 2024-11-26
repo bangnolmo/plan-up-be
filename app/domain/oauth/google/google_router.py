@@ -1,23 +1,19 @@
-import requests
-
 from fastapi import APIRouter
 from fastapi.params import Depends
 from starlette.responses import JSONResponse
-from fastapi.security import OAuth2PasswordBearer
+
 from app.utils.StatusCode import StatusCode
-from app.utils.db_driver import login_user
-from app.utils.env_util import GOOGLE_OAUTH_ID
-from app.utils.env_util import GOOGLE_OAUTH_SECRET
-from app.utils.env_util import GOOGLE_REDIRECT
+from app.utils.db_driver import login_user, select_users_by_email
 
 from app.domain.oauth.google.google_service import get_google_token, get_google_token_info
+from app.domain.oauth.google.google_service import verify_google_token
+from app.domain.oauth.google.google_service import TOKEN_EXPIRE, TOKEN_ERROR
+
 
 router = APIRouter(
     prefix='/google',
     tags= ['oauth']
 )
-
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/oauth/google/login")
 
 @router.get(
     "/login",
@@ -88,8 +84,39 @@ def login_with_google(auth_code: str):
     "/auth",
     summary="사용자의 access token 인증 / Resp. 안학룡"
 )
-def auth_user(token: str = Depends(oauth2_scheme)):
-    pass
+def auth_user(email: str, token: str = Depends(verify_google_token)):
+    """
+    사용자의 access token 검증하기
+
+    :param email: 사용자 이메일
+    :param token: 현재 상태 값
+    :return: {'res': str, 'auth': boolean}
+    """
+    auth = True
+    if token == TOKEN_EXPIRE or token == TOKEN_ERROR:
+        auth = False
+
+    user = select_users_by_email(email)
+
+    if not user or user[1] != token:
+        auth = False
+        token = "invalid email"
+
+    if not auth:
+        return JSONResponse(
+            status_code=StatusCode.HTTP_UNAUTHORIZED,
+            content={'res': token,
+                     'auth': auth}
+        )
+
+    return JSONResponse(
+        status_code=StatusCode.HTTP_OK,
+        content={
+            'res': 'ok!',
+            'auth': auth,
+        }
+    )
+
 
 
 

@@ -149,6 +149,12 @@ def select_jojik_name(gubun, year, hakgi):
 
         
 def select_class_by_idx(idx):
+    """
+    해당 구분(학과)의 개설 과목을 리턴 함.
+
+    :param idx: 해당 학과 ID
+    :return: 개설 과목들 [dict() ...]
+    """
     try:
         conn, cursor = get_conn_and_cursor()
 
@@ -180,8 +186,29 @@ def select_class_by_idx(idx):
         return []
 
 
+def select_users_by_email(email):
+    """
+    email 값을 이용하여 사용자 조회함.
+
+    :param email: 조회항 사용자
+    :return: [email, ac, rc]
+    """
+    try:
+        conn, cursor = get_conn_and_cursor()
+
+        sql_query = "SELECT * FROM users WHERE email = %s"
+        cursor.execute(sql_query, (email,))
+
+        data = cursor.fetchone()
+
+        close_conn_and_cursor(conn, cursor)
+
+        return data
+    except Error as e:
+        print(f"에러 발생 : {e}")
+        return []
+
+
 if __name__ == "__main__":
-    data = select_class_by_idx(12024201)
-    for d in data:
-        print(d)
+    select_users_by_email('@kyonggi.ac.kr')
     # select_jojik_name(1, None, None)
