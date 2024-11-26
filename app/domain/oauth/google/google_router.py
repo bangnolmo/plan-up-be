@@ -10,6 +10,7 @@ from app.utils.env_util import GOOGLE_OAUTH_ID
 from app.utils.env_util import GOOGLE_OAUTH_SECRET
 from app.utils.env_util import GOOGLE_REDIRECT
 
+from app.domain.oauth.google.google_service import get_google_token, get_google_token_info
 
 router = APIRouter(
     prefix='/google',
@@ -31,56 +32,27 @@ def login_with_google(auth_code: str):
     """
 
     # access_token 요청
-    uri = 'https://oauth2.googleapis.com/token'
-    data = {
-        'code': auth_code,
-        'client_id': GOOGLE_OAUTH_ID,
-        'client_secret': GOOGLE_OAUTH_SECRET,
-        'redirect_uri': GOOGLE_REDIRECT,
-        'grant_type': 'authorization_code',
-    }
-    res = requests.post(uri, data=data)
+    token = get_google_token(auth_code)
 
-    # 통신 확인 : 실패시 google 서버 문제 이므로, HTTP_INTERNAL_SERVER_ERROR 리턴
-    if res.status_code  >= 500:
-        return JSONResponse(
-            status_code=StatusCode.HTTP_INTERNAL_SERVER_ERROR,
-            content={"res": "Can't connect google server! (token)"}
-        )
-
-    # google 서버랑 통신 성공 -> at랑 rt 발급 완료
-    token_info = res.json()
-
-    # 사용자가 보낸 assign token 값이 이상할 때
-    if 'error' in token_info:
+    # auth code 값이 이상할 때
+    if not token:
         return JSONResponse(
             status_code=StatusCode.HTTP_BAD_REQUEST,
-            content={"res": "Check your assign code."}
+            content={'res': 'check your auth code.'}
         )
 
     # 사용자 정보 조회 : 이 때 우리는 이메일 만 필요함
     # 따라서 토큰 조회를 통하여 이메일 획득하기.
-    uri = 'https://oauth2.googleapis.com/tokeninfo'
-    params = {
-        'access_token': token_info['access_token']
-    }
-    res = requests.get(uri, params=params)
+    token_info = get_google_token_info(token['access_token'])
 
-    # 통신 확인
-    if res.status_code >= 500:
+    # 발급 받은 token 값에 이상이 있을 때 또는 그 외
+    if not token_info:
         return JSONResponse(
-            status_code=StatusCode.HTTP_INTERNAL_SERVER_ERROR,
-            content={"res": "Can't connect google server! (tokeninfo)"}
+            status_code=StatusCode.HTTP_BAD_REQUEST,
+            content={'res': 'Please try again in a few minutes.'}
         )
 
-    # 사용자 정보에 이메일 정보가 없는 경우 -> google api 명세가 바뀐 경우
-    if 'email' not in res.json():
-        return JSONResponse(
-            status_code=StatusCode.HTTP_INTERNAL_SERVER_ERROR,
-            content={"res": "Wait for update"}
-        )
-
-    user_email = res.json()['email']
+    user_email = token_info['email']
 
     # 학교 메일 검증
     if user_email.find('@kyonggi.ac.kr') == -1:
@@ -89,14 +61,8 @@ def login_with_google(auth_code: str):
             content={'res': f'{user_email} is not school mail!'}
         )
 
-    if 'refresh_token' not in token_info:
-        return JSONResponse(
-            status_code=StatusCode.HTTP_BAD_REQUEST,
-            content={'res': 'Need refresh token'}
-        )
-
-    access_token = token_info['access_token']
-    refresh_token = token_info['refresh_token']
+    access_token = token['access_token']
+    refresh_token = token['refresh_token']
 
     # 사용자가 존재하는 경우 : 토큰을 갠신
     # 사용자가 존재하지 않는 경우 : 사용자및 토큰 저장.
