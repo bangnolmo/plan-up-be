@@ -14,7 +14,7 @@ router = APIRouter(
 )
 
 @router.get(
-    "",
+    "/login",
     summary="Login with google auth / Resp. 안학룡",
 )
 def login_with_google(auth_code: str):
@@ -22,7 +22,7 @@ def login_with_google(auth_code: str):
     사용자가 준 구글 승인 코드를 사용 하여 로그인 수행.
 
     :param auth_code: 구글 승인 코드
-    :return: {"access_token": value, "refresh_token": value}
+    :return: {"access_token": value, "user": value}
     """
 
     # access_token 요청
@@ -37,13 +37,13 @@ def login_with_google(auth_code: str):
     res = requests.post(uri, data=data)
 
     # 통신 확인 : 실패시 google 서버 문제 이므로, HTTP_INTERNAL_SERVER_ERROR 리턴
-    if res.status_code  != StatusCode.HTTP_OK:
+    if res.status_code  >= 500:
         return JSONResponse(
             status_code=StatusCode.HTTP_INTERNAL_SERVER_ERROR,
-            content={"res": "Can't connect google server!"}
+            content={"res": "Can't connect google server! (token)"}
         )
 
-    # google 서버랑 통신 성공
+    # google 서버랑 통신 성공 -> at랑 rt 발급 완료
     token_info = res.json()
 
     # 사용자가 보낸 assign token 값이 이상할 때
@@ -62,10 +62,17 @@ def login_with_google(auth_code: str):
     res = requests.get(uri, params=params)
 
     # 통신 확인
-    if res.status_code != StatusCode.HTTP_OK:
+    if res.status_code >= 500:
         return JSONResponse(
             status_code=StatusCode.HTTP_INTERNAL_SERVER_ERROR,
-            content={"res": "Can't connect google server!"}
+            content={"res": "Can't connect google server! (tokeninfo)"}
+        )
+
+    # 사용자 정보에 이메일 정보가 없는 경우 -> google api 명세가 바뀐 경우
+    if 'email' not in res.json():
+        return JSONResponse(
+            status_code=StatusCode.HTTP_INTERNAL_SERVER_ERROR,
+            content={"res": "Wait for update"}
         )
 
     user_email = res.json()['email']
@@ -77,7 +84,7 @@ def login_with_google(auth_code: str):
             content={'res': f'{user_email} is not school mail!'}
         )
 
-    if token_info.get('refresh_token', '') == '':
+    if 'refresh_token' not in token_info:
         return JSONResponse(
             status_code=StatusCode.HTTP_BAD_REQUEST,
             content={'res': 'Need refresh token'}
@@ -100,6 +107,9 @@ def login_with_google(auth_code: str):
         content={
             'res': 'ok!',
             'access_token': token_info['access_token'],
-            'refresh': token_info['refresh_token'],
+            'user_email': user_email,
         }
     )
+
+
+# @router.get()
