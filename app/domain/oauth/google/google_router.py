@@ -85,16 +85,18 @@ def login_with_google(auth_code: str):
     "/auth",
     summary="사용자의 access token 인증 / Resp. 안학룡"
 )
-def auth_user(email: str, token: str = Depends(verify_google_token)):
+def auth_user(email: str, res: [] = Depends(verify_google_token)):
     """
     사용자의 access token 검증하기
 
+    :param res: [현재 상태, 사용자가 보낸 검증 토큰]
     :param email: 사용자 이메일
-    :param token: 현재 상태 값
     :return: {'res': str, 'auth': boolean}
     """
+    status, token = res
+
     auth = True
-    if token == TOKEN_EXPIRE or token == TOKEN_ERROR:
+    if status == TOKEN_EXPIRE or status == TOKEN_ERROR:
         auth = False
 
     user = select_users_by_email(email)
@@ -124,26 +126,29 @@ def auth_user(email: str, token: str = Depends(verify_google_token)):
     response_model=RefreshUserDTO,
     summary="사용자의 access token 연장 / Resp. 안학룡"
 )
-def refresh_user(data: RefreshUserDTO, token: str = Depends(verify_google_token)):
+def refresh_user(data: RefreshUserDTO, res: [] = Depends(verify_google_token)):
     """
     사용자의 access token이 만료되어 재 발급 받아서 전달
 
+    :param res: [현재 상태, 사용자가 보낸 검증 토큰]
     :param data: {'email':str, 'refresh':str}
     :param token: header에 access token 값을 전달
-    :return: {}
+    :return: success : {'res': str, 'access_token': str}, error : {'res': str}
     """
 
-    # ac_token 만료되지 않았거나, 정상적이지 않는 토큰을 반환했을 때
-    # if token != TOKEN_EXPIRE:
-    #     return JSONResponse(
-    #         status_code=StatusCode.HTTP_BAD_REQUEST,
-    #         content={'res': 'check your access token'},
-    #     )
+    status, token = res
+
+    # ac_token 만료되지 않았거나, 정상적이지 않는 토큰으로 요청 했을 때
+    if status != TOKEN_EXPIRE:
+        return JSONResponse(
+            status_code=StatusCode.HTTP_BAD_REQUEST,
+            content={'res': 'still alive or check your access token'},
+        )
 
     user = select_users_by_email(data.email)
 
     # 이상한 이메일 이거나, 보내온 데이터 확인.
-    if not user or user[2] != data.refresh:
+    if not user or user[2] != data.refresh or token != user[1]:
         return JSONResponse(
             status_code=StatusCode.HTTP_BAD_REQUEST,
             content={'res': 'invalid data'},

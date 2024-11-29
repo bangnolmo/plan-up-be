@@ -68,24 +68,25 @@ def get_google_token_info(access_token):
 
 TOKEN_ERROR = 'error'
 TOKEN_EXPIRE = 'expire'
+TOKEN_OK = 'ok'
 
 def verify_google_token(auth: Optional[str] = Header(None)):
     """
     access token 을 검증 함.
 
     :param auth: 사용자가 보낸 auth header
-    :return: str
+    :return: [status, token]
     """
     if auth is None or not auth.startswith("Bearer "):
-        return TOKEN_ERROR
+        return [TOKEN_ERROR, None]
 
     access_token = auth.split()[1]
     token_info = get_google_token_info(access_token)
 
     if not token_info:
-        return TOKEN_EXPIRE
+        return [TOKEN_EXPIRE, access_token]
 
-    return access_token
+    return [TOKEN_OK, access_token]
 
 
 def refresh_google_token(email, refresh):
