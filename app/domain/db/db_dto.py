@@ -1,7 +1,7 @@
 from pydantic import BaseModel
 
 
-class UpdateRequestDTO(BaseModel):
+class CrawlRequestDTO(BaseModel):
     auth: str
     year: int
     hakgi: int

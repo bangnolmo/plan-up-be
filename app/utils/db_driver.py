@@ -1,7 +1,6 @@
 import mysql.connector
 
 from mysql.connector import Error
-from starlette.responses import JSONResponse
 from app.utils.env_util import DB_HOST
 from app.utils.env_util import DB_NAME
 from app.utils.env_util import DB_PASS
@@ -149,6 +148,12 @@ def select_jojik_name(gubun, year, hakgi):
 
         
 def select_class_by_idx(idx):
+    """
+    해당 구분(학과)의 개설 과목을 리턴 함.
+
+    :param idx: 해당 학과 ID
+    :return: 개설 과목들 [dict() ...]
+    """
     try:
         conn, cursor = get_conn_and_cursor()
 
@@ -180,8 +185,51 @@ def select_class_by_idx(idx):
         return []
 
 
+def select_users_by_email(email):
+    """
+    email 값을 이용하여 사용자 조회함.
+
+    :param email: 조회항 사용자
+    :return: [email, ac, rc]
+    """
+    try:
+        conn, cursor = get_conn_and_cursor()
+
+        sql_query = "SELECT * FROM users WHERE email = %s"
+        cursor.execute(sql_query, (email,))
+
+        data = cursor.fetchone()
+
+        close_conn_and_cursor(conn, cursor)
+
+        return data
+    except Error as e:
+        print(f"에러 발생 : {e}")
+        return []
+
+
+def update_user(email, token):
+    """
+    email 값을 이용하여 사용자의 ac token을 업데이트 함.
+
+    :param email: 업데이트할 사용자
+    :return: boolean / true : 정상, false : 비정상
+    """
+    try:
+        conn, cursor = get_conn_and_cursor()
+
+        sql_query = "UPDATE users SET ac_token = %s WHERE email = %s"
+        cursor.execute(sql_query, (token, email))
+        conn.commit()
+
+        close_conn_and_cursor(conn, cursor)
+
+        return True
+    except Error as e:
+        print(f"에러 발생 : {e}")
+        return False
+
+
 if __name__ == "__main__":
-    data = select_class_by_idx(12024201)
-    for d in data:
-        print(d)
+    select_users_by_email('@kyonggi.ac.kr')
     # select_jojik_name(1, None, None)

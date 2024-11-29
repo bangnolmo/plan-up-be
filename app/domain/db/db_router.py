@@ -1,7 +1,7 @@
 from fastapi import APIRouter
 from starlette.responses import JSONResponse
 
-from app.domain.db.db_dto import UpdateRequestDTO
+from app.domain.db.db_dto import CrawlRequestDTO
 from app.utils.env_util import CRAWL_AUTH
 from app.utils.StatusCode import StatusCode
 from app.utils.db_driver import update_jojik_and_classes
@@ -12,10 +12,10 @@ router = APIRouter(
 )
 
 @router.put(
-    "/update",
-    response_model=UpdateRequestDTO,
+    "/crawl",
+    response_model=CrawlRequestDTO,
     summary="Update Crawling Data / Resp. 안학룡")
-def update_crawling_data(item:  UpdateRequestDTO):
+def update_crawling_data(item:  CrawlRequestDTO):
     """
     크롤링 서버에서 받은 데이터를 DB에 업데이트하는 api
     """
