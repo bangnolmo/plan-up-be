@@ -1,7 +1,6 @@
 import mysql.connector
 
 from mysql.connector import Error
-from starlette.responses import JSONResponse
 from app.utils.env_util import DB_HOST
 from app.utils.env_util import DB_NAME
 from app.utils.env_util import DB_PASS
@@ -207,6 +206,28 @@ def select_users_by_email(email):
     except Error as e:
         print(f"에러 발생 : {e}")
         return []
+
+
+def update_user(email, token):
+    """
+    email 값을 이용하여 사용자의 ac token을 업데이트 함.
+
+    :param email: 업데이트할 사용자
+    :return: boolean / true : 정상, false : 비정상
+    """
+    try:
+        conn, cursor = get_conn_and_cursor()
+
+        sql_query = "UPDATE users SET ac_token = %s WHERE email = %s"
+        cursor.execute(sql_query, (token, email))
+        conn.commit()
+
+        close_conn_and_cursor(conn, cursor)
+
+        return True
+    except Error as e:
+        print(f"에러 발생 : {e}")
+        return False
 
 
 if __name__ == "__main__":

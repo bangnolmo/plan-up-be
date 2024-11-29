@@ -1,6 +1,7 @@
 import requests
 from fastapi import Header
 
+from app.utils.db_driver import update_user
 from app.utils.StatusCode import StatusCode
 from app.utils.env_util import GOOGLE_OAUTH_ID
 from app.utils.env_util import GOOGLE_OAUTH_SECRET
@@ -65,7 +66,6 @@ def get_google_token_info(access_token):
 
     return {'email': result['email'], 'expires_in': int(result['expires_in'])}
 
-
 TOKEN_ERROR = 'error'
 TOKEN_EXPIRE = 'expire'
 
@@ -86,3 +86,37 @@ def verify_google_token(auth: Optional[str] = Header(None)):
         return TOKEN_EXPIRE
 
     return access_token
+
+
+def refresh_google_token(email, refresh):
+    """
+    사용자의 refresh token으로 토큰을 갱신 함.
+
+    :param email: 사용자 이메일
+    :param refresh: 사용자 refresh token
+    :return: new_access_token or None
+    """
+
+    # 새로운 access token 요청하기
+    uri = 'https://oauth2.googleapis.com/token'
+    data = {
+        'client_id': GOOGLE_OAUTH_ID,
+        'client_secret': GOOGLE_OAUTH_SECRET,
+        'refresh_token': refresh,
+        'grant_type': 'refresh_token',
+    }
+    res = requests.post(uri, data=data)
+
+    if res.status_code != StatusCode.HTTP_OK:
+        return None
+
+    new_token = res.json().get('access_token', None)
+
+    if not new_token:
+        return None
+
+    # 사용자 업데이트
+    if update_user(email, new_token):
+        return new_token
+
+    return None
