@@ -20,10 +20,6 @@ logger = setup_logger()
 
 app = FastAPI()
 
-#라우트 등록
-app.include_router(lecture_router.router)
-app.include_router(department_router.router)
-
 # set CORS
 origins = [
     "http://localhost:3000",
@@ -44,6 +40,10 @@ app.include_router(db_router.router)
 
 # 로그인 관련 라우터 추가
 app.include_router(oauth_router.router)
+
+# 학과(교양 구분) 및 데이터 관련 라우터 추가
+app.include_router(lecture_router.router)
+app.include_router(department_router.router)
 
 # 개발을 위한 테스트 라우터 추가
 app.include_router(test_router.router)
