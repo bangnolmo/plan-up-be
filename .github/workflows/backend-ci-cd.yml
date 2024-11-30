@@ -85,14 +85,6 @@ jobs:
                   cluster_name: ${{ env.CLUSTER_NAME }}
                   location: ${{ env.ZONE }}
 
-            - name: Kubernetes 네임스페이스 생성
-              run: kubectl create namespace ${{ env.NAMESPACE }} || echo "Namespace '${{ env.NAMESPACE }}' already exists"
-
-            - name: Kubernetes 매니페스트 적용
-              run: |
-                  kubectl apply -f kubernetes/deployment.yml -n ${{ env.NAMESPACE }}
-                  kubectl apply -f kubernetes/service.yml -n ${{ env.NAMESPACE }}
-
             - name: Kubernetes 배포 이미지 업데이트
               run: |
                   kubectl set image deployment/fastapi-deployment fastapi=${{ env.DOCKER_IMAGE }}:${{ github.sha }} -n ${{ env.NAMESPACE }}
