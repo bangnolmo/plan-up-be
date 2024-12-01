@@ -276,9 +276,9 @@ def select_time_table(email):
     #     result = []
     #     for d in data:
     #         result.append({
+    #             "id": d[0],
     #             "name": d[1],
-    #             "year": d[2],
-    #             "semester": d[3],
+    #             "create_data": d[2],
     #             "owner": d[4]
     #         })
 
