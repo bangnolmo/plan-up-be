@@ -230,6 +230,145 @@ def update_user(email, token):
         return False
 
 
+def create_time_table(name, year, hakgi, owner):
+    """
+    시간표 생성
+
+    :param name: 시간표 명칭
+    :param year: 시간표 생성 시기
+    :param hakgi: 시간표 생성 학기
+    :param owner: 시간표 주인
+    :return: boolean / true : 성공, false : 실패
+    """
+    try:
+        conn, cursor = get_conn_and_cursor()
+
+        create_data = year * 100 + hakgi
+        sql_query = "INSERT INTO time_table VALUES (NULL, %s, %s, %s)"
+
+        cursor.execute(sql_query, (name, create_data, owner))
+        conn.commit()
+
+        close_conn_and_cursor(conn, cursor)
+
+        return True
+
+    except Error as e:
+        print(f'error: {e}')
+        return False
+
+
+def select_time_table(email):
+    """
+    사용자의 시간표 조회
+
+    :param email: 사용자 이메일
+    :return: 시간표 정보
+    """
+    try:
+        conn, cursor = get_conn_and_cursor()
+
+        sql_query = "SELECT * FROM time_table WHERE owner = %s"
+        cursor.execute(sql_query, (email,))
+
+        data = cursor.fetchall()
+
+        result = []
+        for d in data:
+            result.append({
+                "id": d[0],
+                "name": d[1],
+                "create_data": d[2],
+                "owner": d[4]
+            })
+
+        close_conn_and_cursor(conn, cursor)
+
+        return result
+    except Error as e:
+        print(f"에러 발생 : {e}")
+        return []
+
+
+def insert_time_table_lectures(table_idx, class_idx, sub_num):
+    """
+    시간표에 강의 정보 삽입
+
+    :param table_idx: 시간표 ID
+    :param class_idx: 과목 idx
+    :param sub_num: 수업 번호
+    :return: boolean / true : 정상, false : 비정상
+    """
+    try:
+        conn, cursor = get_conn_and_cursor()
+
+        sql_query = "SELECT class_sub_num, class_parent_idx FROM time_table_info WHERE time_table_id = %s"
+        cursor.execute(sql_query, (table_idx, ))
+
+        data = cursor.fetchall()
+
+        for num, idx in data:
+            if num == sub_num and idx == class_idx:
+                return False
+
+        sql_query = "INSERT INTO time_table_info VALUES (NULL, %s, %s, %s)"
+        cursor.execute(sql_query, (table_idx, sub_num, class_idx))
+        conn.commit()
+
+        close_conn_and_cursor(conn, cursor)
+
+        return True
+    except Error as e:
+        print(f"에러 발생 : {e}")
+        return False
+
+
+def select_class_by_time_table_idx(table_idx):
+    """
+    시간표에 담긴 강의 정보 조회
+
+    :param table_idx: 시간표 ID
+    :return: 시간표에 담긴 강의 정보
+    """
+    # table_idx로 테이브에 있는 강의 정보를 조회
+    try:
+        conn, cursor = get_conn_and_cursor()
+
+        sql_query = "SELECT class_sub_num, class_parent_idx FROM time_table_info WHERE table_idx = %s"
+        cursor.execute(sql_query, (table_idx, ))
+
+        data = cursor.fetchall()
+
+        sql_query = "SELECT * FROM classes WHERE sub_num = %s and parent_idx = %s"
+        cursor.executemany(sql_query, data)
+
+        res = cursor.fetchall()
+
+        result_table = []
+        for d in res:
+            result_table.append({
+                "sub_num": d[0],
+                "name": d[1],
+                "grade": d[2],
+                "course_type": d[3],
+                "credits": d[4],
+                "professor": d[5],
+                "note": d[6],
+                "period": d[7],
+                "location": d[8],
+                "parent_idx": d[9]
+            })
+
+        close_conn_and_cursor(conn, cursor)
+        return result_table
+
+    except Error as e:
+        print(f"에러 발생 : {e}")
+        return []
+
+
 if __name__ == "__main__":
-    select_users_by_email('@kyonggi.ac.kr')
+    print(select_users_by_email('inup@kyonggi.ac.kr'))
+
+    # print(create_time_table("test", 2024, 20, "inup@kyonggi.ac.kr "))
     # select_jojik_name(1, None, None)
