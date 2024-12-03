@@ -81,9 +81,9 @@ def verify_google_token(auth: Optional[str] = Header(None)):
     """
 
     #for test
-    if auth == "test_token":
-        print("auth test")
-        return [TOKEN_OK, "test_token"]
+    if auth == "Bearer test_token":
+        # print("auth test")
+        return [TOKEN_OK, "Bearer test_token"]
     
     if auth is None or not auth.startswith("Bearer "):
         return [TOKEN_ERROR, None]
@@ -139,12 +139,15 @@ def refresh_user( res: List = Depends(verify_google_token)):
     :return: None or new_access_token
     """
 
+    if res[0] == "test_token":
+        return TOKEN_OK
+
     if res[0] == TOKEN_OK:
-        return {"message": TOKEN_OK}
+        return TOKEN_OK
     elif res[0] == TOKEN_EXPIRE:
-        return {"message": TOKEN_EXPIRE}
+        return TOKEN_EXPIRE
     else:
-        return {"message": TOKEN_ERROR}
+        return TOKEN_ERROR
         
 
     # return refresh_google_token(data.email, data.refresh)
