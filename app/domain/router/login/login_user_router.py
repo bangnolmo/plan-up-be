@@ -30,8 +30,8 @@ def login(user: User):
         if result:
             return JSONResponse(
                 status_code=StatusCode.HTTP_OK,
-                # content={"message": "Login Successfull"}
-                content= result #디버그용
+                content={"message": "Login Successful"}
+                # content= result #디버그용
             )
         else:
             raise e_1
