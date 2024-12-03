@@ -9,6 +9,12 @@ from app.utils.env_util import GOOGLE_OAUTH_ID
 from app.utils.env_util import GOOGLE_OAUTH_SECRET
 from app.utils.env_util import GOOGLE_REDIRECT
 from typing import List, Optional
+from pydantic_settings import BaseSettings
+
+class Settings(BaseSettings):
+    test_mode: bool = False
+
+settings = Settings()
 
 def get_google_token(auth_code):
     """
@@ -81,7 +87,7 @@ def verify_google_token(auth: Optional[str] = Header(None)):
     """
 
     #for test
-    if auth == "Bearer test_token":
+    if settings.test_mode and auth == "Bearer test_token":
         # print("auth test")
         return [TOKEN_OK, "Bearer test_token"]
     
