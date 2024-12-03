@@ -404,19 +404,20 @@ def select_class_by_time_table_info(result_table):
         print(f"에러 발생 : {e}")
         return []
     
-def delete_time_table_lectures(table_idx, class_idx):
+# 시간표 삭제
+def delete_time_table_by_idx(table_idx):
     # """
-    # 시간표에 담긴 강의 정보 삭제
+    # 시간표 삭제
 
     # :param table_idx: 시간표 ID
-    # :param class_idx: 과목 idx
     # :return: boolean / true : 정상, false : 비정상
     # """
     # try:
     #     conn, cursor = get_conn_and_cursor()
 
-    #     sql_query = "DELETE FROM timetable_lectures WHERE table_idx = %s AND class_idx = %s"
-    #     cursor.execute(sql_query, (table_idx, class_idx))
+    #     sql_query = "DELETE FROM timetable WHERE id = %s"
+    #     cursor.execute(sql_query, (table_idx, ))
+
     #     conn.commit()
 
     #     close_conn_and_cursor(conn, cursor)
@@ -425,11 +426,32 @@ def delete_time_table_lectures(table_idx, class_idx):
     # except Error as e:
     #     print(f"에러 발생 : {e}")
     #     return False
-    return {
-        "table_idx":table_idx, 
-        "class_idx":class_idx,
-        "result": "TimeTable Lecture Deleted Successfully"
-        }
+    return {table_idx}
+
+# 시간표 강의 삭제
+def delete_time_table_lectures_by_idx(table_idx, class_idx):
+    # """
+    # 시간표에 담긴 강의 삭제
+
+    # :param table_idx: 시간표 ID
+    # :param class_idx: 강의 ID
+    # :return: boolean / true : 정상, false : 비정상
+    # """
+    # try:
+    #     conn, cursor = get_conn_and_cursor()
+
+    #     sql_query = "DELETE FROM timetable_lectures WHERE table_idx = %s AND class_idx = %s"
+    #     cursor.execute(sql_query, (table_idx, class_idx))
+
+    #     conn.commit()
+
+    #     close_conn_and_cursor(conn, cursor)
+
+    #     return True
+    # except Error as e:
+    #     print(f"에러 발생 : {e}")
+    #     return False
+    return {table_idx, class_idx}
 
 if __name__ == "__main__":
     select_users_by_email('@kyonggi.ac.kr')

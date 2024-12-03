@@ -9,7 +9,7 @@ from app.domain.oauth.google.google_service import (
     refresh_user
 )
 from app.utils.StatusCode import StatusCode
-from app.utils.db_driver import delete_time_table_lectures_by_idx
+from app.utils.db_driver import delete_time_table_lectures_by_idx, delete_time_table_by_idx
 from app.domain.exceptions.route_exceptions import TimetableNotFoundException as e_1
 from app.domain.exceptions.route_exceptions import InvalidDataFormatException as e_2
 from app.domain.exceptions.token_exceptoins import TokenExpiredException as e_token_expire
@@ -18,25 +18,26 @@ from app.domain.exceptions.token_exceptoins import InvaildTokenException as e_to
 router = APIRouter()
 
 @router.delete(
-    "/timeTable/lectures",
-    summary="시간표에 담긴 강의 정보 삭제 / Resp. 최지민",
+    "/timeTable",
+    summary="시간표 삭제 / Resp. 최지민",
     tags= ['timeTable']
     )
-def delete_time_table_lectures(table_idx: int, class_idx: int, user : dict = Depends(refresh_user)):
+def delete_time_table(table_idx: int, user : dict = Depends(refresh_user)):
     try:
-        if user == TOKEN_OK: 
-            if table_idx == 0 or class_idx == 0:
-                raise e_2
-            result = delete_time_table_lectures_by_idx(table_idx, class_idx)
+        if user == TOKEN_OK:
+            if user == TOKEN_OK: 
+                if table_idx == 0:
+                    raise e_2
+                result = delete_time_table_by_idx(table_idx)
 
-            if result:
-                return JSONResponse(
-                    status_code=StatusCode.HTTP_OK,
-                    content="TimeTable Lecture Deleted Successfully"
-                    # content= result #디버그용
-                )
-            else:
-                raise e_1
+                if result:
+                    return JSONResponse(
+                        status_code=StatusCode.HTTP_OK,
+                        content="TimeTable Deleted Successfully"
+                        # content= result #디버그용
+                    )
+                else:
+                    raise e_1
         elif user == TOKEN_EXPIRE:
             raise e_token_expire
         else:
