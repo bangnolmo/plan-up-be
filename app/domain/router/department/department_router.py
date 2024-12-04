@@ -31,16 +31,13 @@ def fetch_department(id: int, year: int, hakgi: int, user : dict = Depends(refre
                     content=result
                 )
             else:
-                return JSONResponse(
-                    status_code=StatusCode.HTTP_NOT_FOUND,
-                    content={"message": "Data not found"}
-                )
+                raise e
         elif user == TOKEN_EXPIRE:
             raise e_token_expire
         else:
             raise e_token_invalid    
     except e:
-            raise HTTPException(status_code=404, detail=str(e))
+            raise HTTPException(status_code=404, detail=str(e(id)))
     except e_token_expire:
         raise HTTPException(StatusCode.HTTP_UNAUTHORIZED, detail=str(e_token_expire))
     except e_token_invalid:

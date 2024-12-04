@@ -10,18 +10,18 @@ class InvalidLectureException(DomainException):
 
 #학과 예외 처리
 class DepartmentNotFoundException(DomainException):
-    def __init__(self, hakgwa_cd, message="Department not found"):
-        super().__init__(f"{message}: {hakgwa_cd}")
+    def __init__(self, hakgwa_id, message="Department not found"):
+        super().__init__(f"{message}: {hakgwa_id}")
         
 #유저 예외 처리
 class UserNotFoundException(DomainException):
-    def __init__(self, user_id, message="User not found"):
-        super().__init__(f"{message}: {user_id}")   
+    def __init__(self, user_email, message="User not found"):
+        super().__init__(f"{message}: {user_email}")   
 
 #시간표 예외 처리
 class TimetableNotFoundException(DomainException):
-    def __init__(self, user_id, message="Timetable not found"):
-        super().__init__(f"{message}: {user_id}")
+    def __init__(self, table_id, message="Timetable not found"):
+        super().__init__(f"{message}: {table_id}")
 
 #시간표 생성 예외 처리
 class TimetableCreationException(DomainException):

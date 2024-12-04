@@ -36,7 +36,7 @@ def delete_time_table_lectures(table_idx: int, class_idx: int, user : dict = Dep
                     # content= result #디버그용
                 )
             else:
-                raise e_1
+                raise e_1(table_idx)
         elif user == TOKEN_EXPIRE:
             raise e_token_expire
         else:

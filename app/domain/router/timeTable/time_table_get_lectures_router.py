@@ -38,7 +38,7 @@ def get_time_table_lectures(table_idx: int, user : dict = Depends(refresh_user))
                     content=result
                 )
             else:
-                raise e_1
+                raise e_1(table_idx)
         elif user == TOKEN_EXPIRE:
             raise e_token_expire
         else:
