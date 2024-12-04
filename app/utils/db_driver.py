@@ -387,9 +387,11 @@ def select_class_by_time_table_idx(table_idx):
         data = cursor.fetchall()
 
         sql_query = "SELECT * FROM classes WHERE sub_num = %s and parent_idx = %s"
-        cursor.executemany(sql_query, data)
 
-        res = cursor.fetchall()
+        res = []
+        for d in data:
+            cursor.execute(sql_query, d)
+            res += cursor.fetchall()
 
         result_table = []
         for d in res:
