@@ -142,7 +142,7 @@ def refresh_user(data: RefreshUserDTO, res: [] = Depends(verify_google_token)):
     if status != TOKEN_EXPIRE:
         return JSONResponse(
             status_code=StatusCode.HTTP_BAD_REQUEST,
-            content={'res': 'still alive or check your access token'},
+            content={'res': 'still alive or check your access token', 'access_token': 'none'},
         )
 
     user = select_users_by_email(data.email)
@@ -151,7 +151,7 @@ def refresh_user(data: RefreshUserDTO, res: [] = Depends(verify_google_token)):
     if not user or user[2] != data.refresh or token != user[1]:
         return JSONResponse(
             status_code=StatusCode.HTTP_BAD_REQUEST,
-            content={'res': 'invalid data'},
+            content={'res': 'invalid data', 'access_token': 'none'},
         )
 
     # 새로운 token 요청 및 사용자 업데이트
@@ -160,7 +160,7 @@ def refresh_user(data: RefreshUserDTO, res: [] = Depends(verify_google_token)):
     if not new_token:
         return JSONResponse(
             status_code=StatusCode.HTTP_INTERNAL_SERVER_ERROR,
-            content={'res': 'Please try again in a few minutes.'}
+            content={'res': 'Please try again in a few minutes.', 'access_token': 'none'}
         )
 
     return JSONResponse(
