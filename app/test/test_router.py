@@ -58,12 +58,6 @@ def test_get_time_table(headers):
     assert data[0]["name"] == "test"
 
 
-def test_get_time_table_lectures(headers):
-    response = client.get("/timeTable/lectures/1", headers=headers)
-    assert response.status_code == 200
-    assert isinstance(response.json(), list)
-
-
 def test_put_time_table_lectures(headers):
     response = client.put(
         "/timeTable/lectures",
@@ -72,6 +66,12 @@ def test_put_time_table_lectures(headers):
     )
     assert response.status_code == 200
     assert response.json() == "TimeTable Lecture Inserted Successfully"
+
+
+def test_get_time_table_lectures(headers):
+    response = client.get("/timeTable/lectures/1", headers=headers)
+    assert response.status_code == 200
+    assert isinstance(response.json(), list)
 
 
 def test_delete_time_table(headers):
