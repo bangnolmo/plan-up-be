@@ -62,6 +62,7 @@ def test_put_time_table_lectures(headers):
     response = client.put(
         "/timeTable/lectures",
         json={"table_idx": 1, "class_idx": 12024201, "sub_num": "004"},
+        headers=headers,
     )
     assert response.status_code == 200
     assert response.json() == "TimeTable Lecture Inserted Successfully"
