@@ -381,7 +381,7 @@ def select_class_by_time_table_idx(table_idx):
     try:
         conn, cursor = get_conn_and_cursor()
 
-        sql_query = "SELECT class_sub_num, class_parent_idx FROM time_table_info WHERE table_idx = %s"
+        sql_query = "SELECT class_sub_num, class_parent_idx FROM time_table_info WHERE time_table_id = %s"
         cursor.execute(sql_query, (table_idx,))
 
         data = cursor.fetchall()
