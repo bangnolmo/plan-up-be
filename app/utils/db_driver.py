@@ -390,9 +390,40 @@ def delete_time_table_lectures_by_idx(table_idx, class_idx):
         print(f'error {e}')
         return False
 
+
+def delete_time_table_by_idx(table_idx):
+    """
+    idx에 해당하는 테이블 삭제하기
+
+    :param table_idx:삭제할 테이블 idx
+    :return: boolean true: 성공, false: 실패
+    """
+    try:
+        conn, cursor = get_conn_and_cursor()
+
+        # delete classes
+        sql_query = "DELETE FROM time_table_info WHERE time_table_id = %s"
+        cursor.execute(sql_query, (table_idx, ))
+
+        # delete table
+        sql_query = "DELETE FROM time_table WHERE id = %s"
+        cursor.execute(sql_query, (table_idx, ))
+
+        conn.commit()
+
+        close_conn_and_cursor(conn, cursor)
+        return True
+
+    except Error as e:
+        print(f'error : {e}')
+        return False
+
+
 if __name__ == "__main__":
     # print(select_users_by_email('inup@kyonggi.ac.kr'))
-    delete_time_table_lectures_by_idx(5, '0001')
+    # delete_time_table_lectures_by_idx(5, '0001')
+    delete_time_table_by_idx(5)
     # print(create_time_table("test", 2024, 20, "inup@kyonggi.ac.kr "))
+
     # select_jojik_name(1, None, None)
     pass
