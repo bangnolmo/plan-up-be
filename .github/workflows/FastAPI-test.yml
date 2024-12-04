@@ -55,4 +55,4 @@ jobs:
                   DB_PASS: test_password
                   DB_NAME: test_db
               run: |
-                  TEST_MODE=true
+                  TEST_MODE=true pytest
