@@ -11,7 +11,7 @@ client = TestClient(app)
 
 @pytest.fixture
 def headers():
-    return {"auth": "Bearer test_token"}
+    return {"Authorization": "Bearer test_token"}
 
 def setup_module():
     """공통 데이터 준비"""
