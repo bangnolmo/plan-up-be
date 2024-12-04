@@ -367,8 +367,32 @@ def select_class_by_time_table_idx(table_idx):
         return []
 
 
-if __name__ == "__main__":
-    print(select_users_by_email('inup@kyonggi.ac.kr'))
+def delete_time_table_lectures_by_idx(table_idx, class_idx):
+    """
+    idx에 해당하는 테이블에 있는 과목 데이터 삭제하기
 
+    :param table_idx: 테이블 idx
+    :param class_idx: 삭제할과목의 sub_num
+    :return: boolean true: 성공, false: 실패
+    """
+    try:
+        conn, cursor = get_conn_and_cursor()
+
+        # delete class
+        sql_query = "DELETE FROM time_table_info WHERE time_table_id = %s AND class_sub_num = %s"
+
+        cursor.execute(sql_query, (table_idx, class_idx))
+
+        conn.commit()
+
+        return True
+    except Error as e:
+        print(f'error {e}')
+        return False
+
+if __name__ == "__main__":
+    # print(select_users_by_email('inup@kyonggi.ac.kr'))
+    delete_time_table_lectures_by_idx(5, '0001')
     # print(create_time_table("test", 2024, 20, "inup@kyonggi.ac.kr "))
     # select_jojik_name(1, None, None)
+    pass
