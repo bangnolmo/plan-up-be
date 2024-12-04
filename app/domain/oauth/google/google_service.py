@@ -78,23 +78,23 @@ TOKEN_ERROR = 'error'
 TOKEN_EXPIRE = 'expire'
 TOKEN_OK = 'ok'
 
-def verify_google_token(auth: Optional[str] = Header(None)):
+def verify_google_token(authorization: Optional[str] = Header(None)):
     """
     access token 을 검증 함.
 
-    :param auth: 사용자가 보낸 auth header
+    :param authorization: 사용자가 보낸 auth header
     :return: [status, token]
     """
 
     #for test
-    if settings.test_mode and auth == "Bearer test_token":
+    if settings.test_mode and authorization == "Bearer test_token":
         # print("auth test")
         return [TOKEN_OK, "Bearer test_token"]
     
-    if auth is None or not auth.startswith("Bearer "):
+    if authorization is None or not authorization.startswith("Bearer "):
         return [TOKEN_ERROR, None]
 
-    access_token = auth.split()[1]
+    access_token = authorization.split()[1]
     token_info = get_google_token_info(access_token)
 
     if not token_info:
