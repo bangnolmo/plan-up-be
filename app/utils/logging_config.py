@@ -6,7 +6,7 @@ def setup_logger():
     """
     로그 설정 함수
     """
-    log_path = os.getenv("LOG_PATH", "/app/logs/app.log")
+    log_path = os.getenv("LOG_PATH", "/tmp/logs/app.log")
 
     log_dir = os.path.dirname(log_path)
     os.makedirs(log_dir, exist_ok=True)
