@@ -90,7 +90,7 @@ def get_timeTable(email: str, user : dict = Depends(refresh_user)):
     except e_2:
         raise HTTPException(StatusCode.HTTP_NOT_FOUND, detail=str(e_1))
     except e_3:
-        raise HTTPException(StatusCode.HTTP_BAD_REQUEST, detail=str(e_2))
+        raise HTTPException(StatusCode.HTTP_BAD_REQUEST, detail=str(e_2(email)))
     except e_token_expire:
         raise HTTPException(StatusCode.HTTP_UNAUTHORIZED, detail=str(e_token_expire))
     except e_token_invalid:

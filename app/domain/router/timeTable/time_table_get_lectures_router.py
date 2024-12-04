@@ -44,7 +44,7 @@ def get_time_table_lectures(table_idx: int, user : dict = Depends(refresh_user))
         else:
             raise e_token_invalid    
     except e_1:
-        raise HTTPException(StatusCode.HTTP_NOT_FOUND, detail=str(e_1))
+        raise HTTPException(StatusCode.HTTP_NOT_FOUND, detail=str(e_1(table_idx)))
     except e_2:
         raise HTTPException(StatusCode.HTTP_BAD_REQUEST, detail=str(e_2))
     except e_token_expire:
