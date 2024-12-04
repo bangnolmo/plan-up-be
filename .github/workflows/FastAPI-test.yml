@@ -51,8 +51,8 @@ jobs:
               env:
                   DB_HOST: localhost
                   DB_PORT: 3306
-                  DB_USER: test_user
-                  DB_PASS: test_password
+                  DB_USER: root
+                  DB_PASS: rootpassword
                   DB_NAME: test_db
               run: |
                   TEST_MODE=true pytest
