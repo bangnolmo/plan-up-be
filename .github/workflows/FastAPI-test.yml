@@ -11,7 +11,8 @@ on:
 jobs:
     test:
         runs-on: ubuntu-latest
-
+        env:
+            TEST_MODE: "true"
         steps:
             - name: Checkout code
               uses: actions/checkout@v3
