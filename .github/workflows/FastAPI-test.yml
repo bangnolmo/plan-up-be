@@ -13,7 +13,7 @@ jobs:
 
         services:
             mysql:
-                image: your-dockerhub-username/custom-mysql:latest
+                image: heung115/custom-mysql:latest
                 ports:
                     - 3306:3306
                 options: >-
