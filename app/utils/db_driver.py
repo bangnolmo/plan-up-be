@@ -23,7 +23,7 @@ def get_conn_and_cursor():
             user=DB_USER,
             password=DB_PASS,
             database=DB_NAME,
-            charset='utf8'
+            charset="utf8",
         )
         cursor = conn.cursor()
         cursor.execute("set names utf8mb4")
@@ -61,7 +61,9 @@ def update_jojik_and_classes(all_jojik, all_class):
         cursor.executemany(sql_query, all_jojik)
 
         # 모든 수업 데이터 추가 하기
-        sql_query = "INSERT IGNORE INTO classes VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
+        sql_query = (
+            "INSERT IGNORE INTO classes VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
+        )
 
         cursor.executemany(sql_query, all_class)
 
@@ -87,13 +89,15 @@ def login_user(email, ac_token, re_token):
 
         # 사용자 정보 가져오기
         sql_query = "SELECT count(*) FROM users WHERE email = (%s)"
-        cursor.execute(sql_query, (email, ))
+        cursor.execute(sql_query, (email,))
 
         res = cursor.fetchall()
 
         # 사용자 정보 존재 -> token 업데이트 else 사용자 등록
         if res[0][0] == 1:
-            sql_query = "UPDATE users SET ac_token = (%s), re_token = (%s) WHERE email = (%s)"
+            sql_query = (
+                "UPDATE users SET ac_token = (%s), re_token = (%s) WHERE email = (%s)"
+            )
             cursor.execute(sql_query, (ac_token, re_token, email))
         else:
             sql_query = "INSERT INTO users VALUES (%s, %s, %s)"
@@ -126,17 +130,13 @@ def select_jojik_name(gubun, year, hakgi):
 
         sql_query = "SELECT name, idx FROM jojik WHERE IDX % 10000000 = %s"
 
-        cursor.execute(sql_query, (find_id, ))
+        cursor.execute(sql_query, (find_id,))
 
         data = cursor.fetchall()
 
-
         result = []
         for d in data:
-            result.append({
-                'name': d[0],
-                'idx': d[1]
-            })
+            result.append({"name": d[0], "idx": d[1]})
 
         close_conn_and_cursor(conn, cursor)
 
@@ -146,7 +146,7 @@ def select_jojik_name(gubun, year, hakgi):
         print(f"에러 발생 : {e}")
         return []
 
-        
+
 def select_class_by_idx(idx):
     """
     해당 구분(학과)의 개설 과목을 리턴 함.
@@ -158,24 +158,26 @@ def select_class_by_idx(idx):
         conn, cursor = get_conn_and_cursor()
 
         sql_query = "SELECT * FROM classes WHERE parent_idx = %s"
-        cursor.execute(sql_query, (idx, ))
+        cursor.execute(sql_query, (idx,))
 
         data = cursor.fetchall()
 
         result = []
         for d in data:
-            result.append({
-                "sub_num": d[0],
-                "name": d[1],
-                "grade": d[2],
-                "course_type": d[3],
-                "credits": d[4],
-                "professor": d[5],
-                "note": d[6],
-                "period": d[7],
-                "location": d[8],
-                "parent_idx": d[9]
-            })
+            result.append(
+                {
+                    "sub_num": d[0],
+                    "name": d[1],
+                    "grade": d[2],
+                    "course_type": d[3],
+                    "credits": d[4],
+                    "professor": d[5],
+                    "note": d[6],
+                    "period": d[7],
+                    "location": d[8],
+                    "parent_idx": d[9],
+                }
+            )
 
         close_conn_and_cursor(conn, cursor)
 
@@ -231,9 +233,9 @@ def update_user(email, token):
         return False
 
 
-#Debug
+# Debug
 def test_login_user(email, ac_token, re_token):
-    return { 'email': email, 'ac_token': ac_token, 're_token': re_token }
+    return {"email": email, "ac_token": ac_token, "re_token": re_token}
 
 
 def select_class_by_time_table_info(result_table):
@@ -250,23 +252,25 @@ def select_class_by_time_table_info(result_table):
         result_class = []
         for d in result_table:
             sql_query = "SELECT * FROM classes WHERE parent_idx = %s AND sub_num = %s"
-            cursor.execute(sql_query, (d['class_parant_idx'], d['class_sub_num']))
+            cursor.execute(sql_query, (d["class_parant_idx"], d["class_sub_num"]))
 
             data = cursor.fetchall()
 
             for d in data:
-                result_class.append({
-                    "sub_num": d[0],
-                    "name": d[1],
-                    "grade": d[2],
-                    "course_type": d[3],
-                    "credits": d[4],
-                    "professor": d[5],
-                    "note": d[6],
-                    "period": d[7],
-                    "location": d[8],
-                    "parent_idx": d[9]
-                })
+                result_class.append(
+                    {
+                        "sub_num": d[0],
+                        "name": d[1],
+                        "grade": d[2],
+                        "course_type": d[3],
+                        "credits": d[4],
+                        "professor": d[5],
+                        "note": d[6],
+                        "period": d[7],
+                        "location": d[8],
+                        "parent_idx": d[9],
+                    }
+                )
 
         close_conn_and_cursor(conn, cursor)
 
@@ -300,7 +304,7 @@ def create_time_table(name, year, hakgi, owner):
         return True
 
     except Error as e:
-        print(f'error: {e}')
+        print(f"error: {e}")
         return False
 
 
@@ -321,12 +325,9 @@ def select_time_table(email):
 
         result = []
         for d in data:
-            result.append({
-                "id": d[0],
-                "name": d[1],
-                "create_data": d[2],
-                "owner": d[4]
-            })
+            result.append(
+                {"id": d[0], "name": d[1], "create_data": d[2], "owner": d[3]}
+            )
 
         close_conn_and_cursor(conn, cursor)
 
@@ -349,7 +350,7 @@ def insert_time_table_lectures(table_idx, class_idx, sub_num):
         conn, cursor = get_conn_and_cursor()
 
         sql_query = "SELECT class_sub_num, class_parent_idx FROM time_table_info WHERE time_table_id = %s"
-        cursor.execute(sql_query, (table_idx, ))
+        cursor.execute(sql_query, (table_idx,))
 
         data = cursor.fetchall()
 
@@ -381,7 +382,7 @@ def select_class_by_time_table_idx(table_idx):
         conn, cursor = get_conn_and_cursor()
 
         sql_query = "SELECT class_sub_num, class_parent_idx FROM time_table_info WHERE table_idx = %s"
-        cursor.execute(sql_query, (table_idx, ))
+        cursor.execute(sql_query, (table_idx,))
 
         data = cursor.fetchall()
 
@@ -392,18 +393,20 @@ def select_class_by_time_table_idx(table_idx):
 
         result_table = []
         for d in res:
-            result_table.append({
-                "sub_num": d[0],
-                "name": d[1],
-                "grade": d[2],
-                "course_type": d[3],
-                "credits": d[4],
-                "professor": d[5],
-                "note": d[6],
-                "period": d[7],
-                "location": d[8],
-                "parent_idx": d[9]
-            })
+            result_table.append(
+                {
+                    "sub_num": d[0],
+                    "name": d[1],
+                    "grade": d[2],
+                    "course_type": d[3],
+                    "credits": d[4],
+                    "professor": d[5],
+                    "note": d[6],
+                    "period": d[7],
+                    "location": d[8],
+                    "parent_idx": d[9],
+                }
+            )
 
         close_conn_and_cursor(conn, cursor)
         return result_table
@@ -433,7 +436,7 @@ def delete_time_table_lectures_by_idx(table_idx, class_idx):
 
         return True
     except Error as e:
-        print(f'error {e}')
+        print(f"error {e}")
         return False
 
 
@@ -449,11 +452,11 @@ def delete_time_table_by_idx(table_idx):
 
         # delete classes
         sql_query = "DELETE FROM time_table_info WHERE time_table_id = %s"
-        cursor.execute(sql_query, (table_idx, ))
+        cursor.execute(sql_query, (table_idx,))
 
         # delete table
         sql_query = "DELETE FROM time_table WHERE id = %s"
-        cursor.execute(sql_query, (table_idx, ))
+        cursor.execute(sql_query, (table_idx,))
 
         conn.commit()
 
@@ -461,7 +464,7 @@ def delete_time_table_by_idx(table_idx):
         return True
 
     except Error as e:
-        print(f'error : {e}')
+        print(f"error : {e}")
         return False
 
 
