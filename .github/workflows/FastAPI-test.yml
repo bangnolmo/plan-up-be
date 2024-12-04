@@ -7,6 +7,7 @@ on:
     pull_request:
         branches:
             - main
+
 jobs:
     test:
         runs-on: ubuntu-latest
@@ -14,6 +15,11 @@ jobs:
         services:
             mysql:
                 image: heung115/custom-mysql:latest
+                env:
+                    MYSQL_ROOT_PASSWORD: rootpassword
+                    MYSQL_DATABASE: planup
+                    MYSQL_USER: test_user
+                    MYSQL_PASSWORD: test_password
                 ports:
                     - 3306:3306
                 options: >-
@@ -39,12 +45,12 @@ jobs:
             - name: Wait for MySQL to be ready
               run: |
                   for i in {1..60}; do
-                  if mysqladmin ping -h localhost -P 3306 -u test_user -ptest_password --silent; then
+                    if mysqladmin ping -h localhost -P 3306 -u test_user -ptest_password --silent; then
                       echo "MySQL is up!"
                       break
-                  fi
-                  echo "Waiting for MySQL..."
-                  sleep 2
+                    fi
+                    echo "Waiting for MySQL..."
+                    sleep 2
                   done
 
             - name: Check MySQL logs
