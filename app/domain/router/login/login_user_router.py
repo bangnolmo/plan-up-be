@@ -24,8 +24,8 @@ def login(user: User):
     try:
         if user.user_id == "":
             raise e_2
-        # result = login_user(user.user_id, user.ac_token, user.re_token)
-        result = test_login_user(user.user_id, user.ac_token, user.re_token)
+        result = login_user(user.user_id, user.ac_token, user.re_token)
+        # result = test_login_user(user.user_id, user.ac_token, user.re_token)
 
         if result:
             return JSONResponse(

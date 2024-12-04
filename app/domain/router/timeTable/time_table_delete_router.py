@@ -9,7 +9,7 @@ from app.domain.oauth.google.google_service import (
     refresh_user
 )
 from app.utils.StatusCode import StatusCode
-from app.utils.db_driver import delete_time_table_lectures_by_idx, delete_time_table_by_idx
+from app.utils.db_driver import delete_time_table_by_idx
 from app.domain.exceptions.route_exceptions import TimetableNotFoundException as e_1
 from app.domain.exceptions.route_exceptions import InvalidDataFormatException as e_2
 from app.domain.exceptions.token_exceptoins import TokenExpiredException as e_token_expire
@@ -37,7 +37,7 @@ def delete_time_table(table_idx: int, user : dict = Depends(refresh_user)):
                         # content= result #디버그용
                     )
                 else:
-                    raise e_1
+                    raise e_1(table_idx)
         elif user == TOKEN_EXPIRE:
             raise e_token_expire
         else:
