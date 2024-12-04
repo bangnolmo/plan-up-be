@@ -7,15 +7,23 @@ on:
     pull_request:
         branches:
             - main
-
 jobs:
     test:
         runs-on: ubuntu-latest
-        env:
-            TEST_MODE: "true"
+
+        services:
+            mysql:
+                image: your-dockerhub-username/custom-mysql:latest
+                ports:
+                    - 3306:3306
+                options: >-
+                    --health-cmd="mysqladmin ping --silent"
+                    --health-interval=10s
+                    --health-timeout=5s
+                    --health-retries=3
+
         steps:
-            - name: Checkout code
-              uses: actions/checkout@v3
+            - uses: actions/checkout@v3
 
             - name: Set up Python
               uses: actions/setup-python@v4
@@ -27,7 +35,24 @@ jobs:
                   python -m pip install --upgrade pip
                   pip install -r requirements.txt
                   pip install pytest
-            # Run tests
-            - name: Run tests
+
+            - name: Wait for MySQL to be ready
               run: |
-                  pytest
+                  for i in {1..30}; do
+                    if mysqladmin ping -h localhost -P 3306 --silent; then
+                      echo "MySQL is up!"
+                      break
+                    fi
+                    echo "Waiting for MySQL..."
+                    sleep 2
+                  done
+
+            - name: Run tests
+              env:
+                  DB_HOST: localhost
+                  DB_PORT: 3306
+                  DB_USER: test_user
+                  DB_PASS: test_password
+                  DB_NAME: test_db
+              run: |
+                  TEST_MODE=true
