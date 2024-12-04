@@ -38,7 +38,7 @@ jobs:
 
             - name: Wait for MySQL to be ready
               run: |
-                  for i in {1..30}; do
+                  for i in {1..60}; do
                     if mysqladmin ping -h localhost -P 3306 --silent; then
                       echo "MySQL is up!"
                       break
@@ -47,12 +47,15 @@ jobs:
                     sleep 2
                   done
 
+            - name: Check MySQL logs
+              run: docker logs $(docker ps -q --filter ancestor=mysql:8.0)
+
             - name: Run tests
               env:
                   DB_HOST: localhost
                   DB_PORT: 3306
                   DB_USER: root
                   DB_PASS: rootpassword
-                  DB_NAME: test_db
+                  DB_NAME: planup
               run: |
                   TEST_MODE=true pytest
