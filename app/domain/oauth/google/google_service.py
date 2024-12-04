@@ -1,12 +1,20 @@
+from fastapi.responses import JSONResponse
 import requests
-from fastapi import Header
+from fastapi import Depends, Header
 
+from app.domain.oauth.google.google_dto import RefreshUserDTO
 from app.utils.db_driver import update_user
 from app.utils.StatusCode import StatusCode
 from app.utils.env_util import GOOGLE_OAUTH_ID
 from app.utils.env_util import GOOGLE_OAUTH_SECRET
 from app.utils.env_util import GOOGLE_REDIRECT
-from typing import Optional
+from typing import List, Optional
+from pydantic_settings import BaseSettings
+
+class Settings(BaseSettings):
+    test_mode: bool = False
+
+settings = Settings()
 
 def get_google_token(auth_code):
     """
@@ -77,6 +85,12 @@ def verify_google_token(auth: Optional[str] = Header(None)):
     :param auth: 사용자가 보낸 auth header
     :return: [status, token]
     """
+
+    #for test
+    if settings.test_mode and auth == "Bearer test_token":
+        # print("auth test")
+        return [TOKEN_OK, "Bearer test_token"]
+    
     if auth is None or not auth.startswith("Bearer "):
         return [TOKEN_ERROR, None]
 
@@ -121,3 +135,25 @@ def refresh_google_token(email, refresh):
         return new_token
 
     return None
+
+def refresh_user( res: List = Depends(verify_google_token)):
+    """
+    사용자의 토큰을 갱신함.
+
+    :param data: 사용자의 이메일과 refresh token
+    :param res: 사용자의 access token
+    :return: None or new_access_token
+    """
+
+    if res[0] == "test_token":
+        return TOKEN_OK
+
+    if res[0] == TOKEN_OK:
+        return TOKEN_OK
+    elif res[0] == TOKEN_EXPIRE:
+        return TOKEN_EXPIRE
+    else:
+        return TOKEN_ERROR
+        
+
+    # return refresh_google_token(data.email, data.refresh)
