@@ -12,22 +12,6 @@ jobs:
     test:
         runs-on: ubuntu-latest
 
-        services:
-            mysql:
-                image: heung115/custom-mysql:latest
-                env:
-                    MYSQL_ROOT_PASSWORD: rootpassword
-                    MYSQL_DATABASE: planup
-                    MYSQL_USER: test_user
-                    MYSQL_PASSWORD: test_password
-                ports:
-                    - 3306:3306
-                options: >-
-                    --health-cmd="mysqladmin ping --silent"
-                    --health-interval=10s
-                    --health-timeout=5s
-                    --health-retries=3
-
         steps:
             - uses: actions/checkout@v3
 
@@ -42,19 +26,29 @@ jobs:
                   pip install -r requirements.txt
                   pip install pytest
 
+            - name: Start MySQL container
+              run: |
+                  docker run --name mysql-container \
+                    -e MYSQL_ROOT_PASSWORD=rootpassword \
+                    -e MYSQL_DATABASE=planup \
+                    -e MYSQL_USER=test_user \
+                    -e MYSQL_PASSWORD=test_password \
+                    -p 3306:3306 \
+                    -d heung115/custom-mysql:latest
+
             - name: Wait for MySQL to be ready
               run: |
                   for i in {1..60}; do
-                    if mysqladmin ping -h localhost -P 3306 -u test_user -ptest_password --silent; then
+                      if docker exec mysql-container mysqladmin ping -h localhost -u test_user -ptest_password --silent; then
                       echo "MySQL is up!"
                       break
-                    fi
-                    echo "Waiting for MySQL..."
-                    sleep 2
+                      fi
+                      echo "Waiting for MySQL..."
+                      sleep 2
                   done
 
             - name: Check MySQL logs
-              run: docker logs $(docker ps -q --filter ancestor=heung115/custom-mysql:latest)
+              run: docker logs mysql-container
 
             - name: Run tests
               env:
