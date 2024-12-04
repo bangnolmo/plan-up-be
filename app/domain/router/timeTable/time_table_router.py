@@ -82,12 +82,12 @@ def get_timeTable(email: str, user : dict = Depends(refresh_user)):
                     content=result
                 )
             else:
-                raise e_2
+                raise e_2(email)
         elif user == TOKEN_EXPIRE:
             raise e_token_expire
         else:
             raise e_token_invalid        
-    except e_2:
+    except e_2(email):
         raise HTTPException(StatusCode.HTTP_NOT_FOUND, detail=str(e_2(email)))
     except e_3:
         raise HTTPException(StatusCode.HTTP_BAD_REQUEST, detail=str(e_3))

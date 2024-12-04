@@ -41,13 +41,13 @@ def put_time_table_lectures(tableInfo: tableInfo, user : dict = Depends(refresh_
                     # content= result #디버그용
                 )
             else:
-                raise e_1
+                raise e_1(tableInfo.table_idx)
         elif user == TOKEN_EXPIRE:
             raise e_token_expire
         else:
             raise e_token_invalid    
         
-    except e_1:
+    except e_1(tableInfo.table_idx):
         raise HTTPException(StatusCode.HTTP_NOT_FOUND, detail=str(e_1(tableInfo.table_idx)))
     except e_2:
         raise HTTPException(StatusCode.HTTP_BAD_REQUEST, detail=str(e_2))
